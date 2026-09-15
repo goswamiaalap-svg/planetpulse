@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { getWeekRange } from '@/lib/week'
+import { getWeekRange, getPreviousWeekRange } from '@/lib/week'
 import { buildUserContext } from '@/lib/rag/context/userContext'
 import { CarbonCoachService } from '@/lib/rag/services/carbonCoachService'
 import { Activity } from '@/lib/supabase'
