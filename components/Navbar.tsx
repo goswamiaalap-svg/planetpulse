@@ -18,10 +18,10 @@ export default function Navbar() {
         {/* Circular Logo matching PramaanCheck */}
         <Link
           href="/"
-          className="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-2xl flex-shrink-0 transition-transform hover:scale-105 active:scale-95"
+          className="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center flex-shrink-0 transition-transform hover:scale-105 active:scale-95 overflow-hidden border border-white/20"
           aria-label="PlanetPulse Home"
         >
-          🌱
+          <img src="/logo.png" alt="PlanetPulse Logo" className="w-10 h-10 object-contain" />
         </Link>
 
         {/* Floating White Pill Navigation */}

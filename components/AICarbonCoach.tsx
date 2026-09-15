@@ -90,8 +90,8 @@ export default function AICarbonCoach() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2 border-b border-emerald-950/60 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xl shadow-inner">
-            🌱
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-inner overflow-hidden border border-emerald-500/30">
+            <img src="/logo.png" alt="PlanetPulse" className="w-8 h-8 object-contain" />
           </div>
           <div>
             <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
