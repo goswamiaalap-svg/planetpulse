@@ -112,8 +112,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-gray-100 tracking-tight">This Week&apos;s Footprint</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <h1 className="text-3xl font-black text-white tracking-tight">This Week&apos;s Footprint</h1>
+          <p className="text-emerald-300/70 text-sm mt-1 font-medium">
             {from} → {to} · ISO week (Mon–Sun)
           </p>
         </div>
