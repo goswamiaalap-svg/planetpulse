@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { ActivityType, calculateCO2 } from '@/lib/co2'
+import { ActivityType, calculateCO2, ABSURD_THRESHOLDS } from '@/lib/co2'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,21 +42,34 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const supabase = getSupabase()
 
-  let body: { type: ActivityType; quantity: number; co2_kg?: number; date: string }
+  let body: { type: ActivityType; quantity: number; co2_kg?: number; date: string; confirmed?: boolean }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { type, quantity, date } = body
+  const { type, quantity, date, confirmed } = body
 
-  if (!type || !quantity || !date) {
+  if (!type || quantity === undefined || !date) {
     return NextResponse.json({ error: 'Missing required fields: type, quantity, date' }, { status: 400 })
   }
 
   if (typeof quantity !== 'number' || quantity <= 0) {
     return NextResponse.json({ error: 'quantity must be a positive number' }, { status: 400 })
+  }
+
+  // DP2: Server-side absurd input guard
+  const threshold = ABSURD_THRESHOLDS[type]
+  if (threshold && quantity > threshold && !confirmed) {
+    return NextResponse.json(
+      {
+        error: "That's an unusually large entry — are you sure this is correct?",
+        requiresConfirmation: true,
+        threshold,
+      },
+      { status: 422 }
+    )
   }
 
   // Always compute co2_kg server-side (canonical source of truth)

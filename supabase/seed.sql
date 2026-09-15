@@ -19,7 +19,7 @@ insert into activities (type, quantity, co2_kg, date) values
   -- Tuesday 15 Sep (today)
   ('bus',          18,    1.440,  '2026-09-15'),   -- 18km bus × 0.08
   ('veg_meal',      3,    1.500,  '2026-09-15'),   -- 3 veg meals × 0.5
-  ('flight',      450,  112.500,  '2026-09-15');   -- 450km domestic flight × 0.25
+  ('flight',       45,   11.250,  '2026-09-15');   -- 45km flight × 0.25
 
 -- ============================================================
 -- LAST WEEK (2026-09-07 to 2026-09-13)

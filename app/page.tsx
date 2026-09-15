@@ -76,6 +76,11 @@ export default function DashboardPage() {
 
   const isOver = target !== null && totalCO2 > target
 
+  // Find top category
+  const topCategory = breakdown.length > 0
+    ? [...breakdown].sort((a, b) => b.co2_kg - a.co2_kg)[0]
+    : null
+
   const handleSaveTarget = async () => {
     const val = parseFloat(targetForm.value)
     if (isNaN(val) || val <= 0) return
@@ -108,88 +113,138 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* 1. Cinematic Hero Section matching PramaanCheck */}
-      <section className="text-center pt-8 pb-4 max-w-3xl mx-auto flex flex-col items-center">
+    <div className="space-y-6">
+      {/* 1. Cinematic Hero Section with compact vertical padding */}
+      <section className="text-center pt-2 pb-1 max-w-3xl mx-auto flex flex-col items-center">
         {/* Trust pill row */}
-        <div className="inline-flex items-center gap-2 bg-[#28282a]/80 backdrop-blur-md border border-white/20 rounded-full py-1.5 px-4 mb-6 shadow-xl">
-          <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold">
+        <div className="inline-flex items-center gap-2 bg-[#28282a]/80 backdrop-blur-md border border-white/20 rounded-full py-1 px-3.5 mb-3 shadow-lg">
+          <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-[10px] font-bold">
             🌱
           </span>
-          <span className="text-xs font-medium tracking-wide text-gray-200">
+          <span className="text-[11px] font-medium tracking-wide text-gray-200">
             Real-Time Carbon Footprint Intelligence • Climate Tech
           </span>
         </div>
 
-        {/* Big Bold Headline matching PramaanCheck */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-white leading-none mb-4 drop-shadow-md">
+        {/* Big Bold Headline with compact margins */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-none mb-2.5 drop-shadow-md">
           PLANETPULSE
           <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-white to-teal-200">
             CARBON AI TRACKER
           </span>
         </h1>
 
-        <p className="text-gray-300 text-sm sm:text-base max-w-xl leading-relaxed mb-6 font-normal">
+        <p className="text-gray-300 text-xs sm:text-sm max-w-lg leading-relaxed mb-4 font-normal">
           Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time GPT-4o sustainability insights &amp; statutory audit.
         </p>
 
-        {/* Big Rounded CTA Button matching PramaanCheck */}
+        {/* Action button */}
         <Link
           href="/log"
-          className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-8 py-3.5 rounded-full text-base shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+          className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-7 py-2.5 rounded-full text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mb-4"
         >
           <span>Inspect &amp; Log Activity</span>
-          <span className="text-lg">→</span>
+          <span className="text-base">→</span>
         </Link>
+
+        {/* Layout improvement 2: Thin horizontal category-breakdown strip */}
+        {totalCO2 > 0 && breakdown.length > 0 && (
+          <div className="w-full max-w-xl mx-auto mt-1 mb-2">
+            <div className="h-2 w-full rounded-full overflow-hidden flex bg-white/10 border border-white/15 shadow-inner">
+              {breakdown.map((b) => {
+                const sharePct = (b.co2_kg / totalCO2) * 100
+                return (
+                  <div
+                    key={b.type}
+                    style={{
+                      width: `${sharePct}%`,
+                      backgroundColor: CATEGORY_COLORS[b.type],
+                    }}
+                    title={`${getTypeName(b.type)}: ${b.co2_kg.toFixed(1)} kg (${sharePct.toFixed(1)}%)`}
+                    className="h-full transition-all duration-500 hover:opacity-90"
+                  />
+                )
+              })}
+            </div>
+            {/* Category micro-legend matching dark theme accents */}
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-gray-300">
+              {breakdown.map((b) => (
+                <span key={b.type} className="inline-flex items-center gap-1.5">
+                  <span
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: CATEGORY_COLORS[b.type] }}
+                  />
+                  <span>{getTypeName(b.type)}</span>
+                  <span className="text-gray-400 font-mono text-[10px]">
+                    {((b.co2_kg / totalCO2) * 100).toFixed(0)}%
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* 2. Stats Row matching PramaanCheck Stats Footer */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-        {/* Stat 1: Total CO2 */}
-        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
-          <div className="text-xs font-mono font-bold text-emerald-400 mb-1">&lt; kg CO₂</div>
-          <div
-            className="text-3xl sm:text-4xl font-black text-white font-mono"
-            data-testid="total-co2"
-            aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
-          >
-            {totalCO2.toFixed(1)}
+      {/* 2. Stats Row: 5 compact balanced cards with subtle gradient backdrop */}
+      <div className="relative max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-2">
+          {/* Stat 1: Total CO2 */}
+          <div className="card text-center py-4 px-3 border-white/10 hover:border-emerald-500/40 transition-all bg-black/40">
+            <div className="text-[11px] font-mono font-bold text-emerald-400 mb-1">&lt; kg CO₂</div>
+            <div
+              className="text-2xl sm:text-3xl font-black text-white font-mono"
+              data-testid="total-co2"
+              aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
+            >
+              {totalCO2.toFixed(1)}
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+              This Week Total
+            </div>
           </div>
-          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-            This Week&apos;s Total
-          </div>
-        </div>
 
-        {/* Stat 2: Target Limit */}
-        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
-          <div className="text-xs font-mono font-bold text-amber-400 mb-1">% TARGET</div>
-          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
-            {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
+          {/* Stat 2: Target Limit */}
+          <div className="card text-center py-4 px-3 border-white/10 hover:border-amber-500/40 transition-all bg-black/40">
+            <div className="text-[11px] font-mono font-bold text-amber-400 mb-1">% TARGET</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+              {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+              Target Pace
+            </div>
           </div>
-          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-            Target Consumption
-          </div>
-        </div>
 
-        {/* Stat 3: Week Day Progress */}
-        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
-          <div className="text-xs font-mono font-bold text-teal-400 mb-1">* WEEK</div>
-          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
-            {weekProgress.dayOfWeek}/7
+          {/* Stat 3: Week Day Progress */}
+          <div className="card text-center py-4 px-3 border-white/10 hover:border-teal-500/40 transition-all bg-black/40">
+            <div className="text-[11px] font-mono font-bold text-teal-400 mb-1">* WEEK</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+              {weekProgress.dayOfWeek}/7
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+              Days Elapsed
+            </div>
           </div>
-          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-            ISO Days Elapsed
-          </div>
-        </div>
 
-        {/* Stat 4: Activities count */}
-        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
-          <div className="text-xs font-mono font-bold text-purple-400 mb-1"># ENTRIES</div>
-          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
-            {activities.length}
+          {/* Stat 4: Activities count */}
+          <div className="card text-center py-4 px-3 border-white/10 hover:border-purple-500/40 transition-all bg-black/40">
+            <div className="text-[11px] font-mono font-bold text-purple-400 mb-1"># ENTRIES</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+              {activities.length}
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+              Logged Events
+            </div>
           </div>
-          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-            Activities Logged
+
+          {/* Stat 5: Top Category this week (Balances row on wider viewports) */}
+          <div className="card text-center py-4 px-3 border-white/10 hover:border-rose-500/40 transition-all bg-black/40 col-span-2 sm:col-span-1">
+            <div className="text-[11px] font-mono font-bold text-rose-400 mb-1">TOP SECTOR</div>
+            <div className="text-lg sm:text-xl font-bold text-white truncate px-1 mt-1 font-mono">
+              {topCategory ? getTypeName(topCategory.type) : 'None'}
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+              {topCategory ? `${topCategory.co2_kg.toFixed(1)} kg` : 'Primary driver'}
+            </div>
           </div>
         </div>
       </div>
@@ -294,22 +349,22 @@ export default function DashboardPage() {
                     data-activity-id={a.id}
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
-                      />
-                      <span className="font-semibold text-gray-200 truncate">{getTypeName(a.type)}</span>
-                    </div>
-                    <div className="text-right font-mono flex-shrink-0">
-                      <span className="font-bold text-white">{Number(a.co2_kg).toFixed(2)} kg</span>
-                    </div>
-                  </div>
-                ))}
+                  <span
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
+                  />
+                  <span className="font-semibold text-gray-200 truncate">{getTypeName(a.type)}</span>
+                </div>
+                <div className="text-right font-mono flex-shrink-0">
+                  <span className="font-bold text-white">{Number(a.co2_kg).toFixed(2)} kg</span>
+                </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
+  </div>
+</div>
   )
 }

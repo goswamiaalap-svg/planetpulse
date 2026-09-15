@@ -10,11 +10,11 @@ type Props = {
 
 export default function ProgressBar({ total, target, weekProgress }: Props) {
   // No target set
-  if (target === null || target === undefined) {
+  if (target === null || target === undefined || target <= 0) {
     return (
       <div className="card">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-200">Weekly Target</h2>
+          <h2 className="text-base font-bold text-gray-200 uppercase tracking-wider">Weekly Target</h2>
         </div>
         <div className="text-center py-4">
           <p className="text-gray-400 text-sm">
@@ -31,11 +31,16 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
 
   const isOver = total > target
   const overBy = isOver ? +(total - target).toFixed(3) : 0
+  const realPct = Math.round((total / target) * 100)
+  const pctOver = Math.round(((total - target) / target) * 100)
 
   // Expected consumption based on week elapsed
   const expectedPct = weekProgress.elapsedPct
-  const actualPct = target > 0 ? (total / target) * 100 : 0
+  const actualPct = (total / target) * 100
   const isAheadOfPace = actualPct > expectedPct
+
+  // Visual fill is strictly capped at 100% width
+  const visualFillPct = Math.min(Math.max(actualPct, 0), 100)
 
   const barColor = isOver
     ? 'bg-rose-500 shadow-rose-500/50'
@@ -43,70 +48,73 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
     ? 'bg-amber-400 shadow-amber-400/50'
     : 'bg-emerald-400 shadow-emerald-400/50'
 
-  const barPct = Math.min((total / target) * 100, 100)
-
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-1.5">
-        <h2 className="text-lg font-bold text-gray-200">Weekly Target</h2>
+        <h2 className="text-base font-bold text-gray-200 uppercase tracking-wider">Weekly Target Pace</h2>
         {isOver && (
-          <span className="text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse">
+          <span className="text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse">
             <span>⚠️</span> Over target
           </span>
         )}
       </div>
 
       {/* Week elapsed label (DP3) */}
-      <p className="text-xs text-gray-400 mb-4" data-testid="week-progress-label">
+      <p className="text-xs text-gray-400 mb-3" data-testid="week-progress-label">
         {formatWeekProgressLabel(weekProgress)}
       </p>
 
-      {/* Progress bar */}
+      {/* Progress bar — strictly capped at 100% width */}
       <div className="relative mb-3.5">
         <div className="w-full bg-[#0d1613] border border-emerald-950/60 rounded-full h-4 overflow-hidden p-0.5">
           <div
             className={`h-full rounded-full transition-all duration-700 shadow-sm ${barColor}`}
-            style={{ width: `${barPct}%` }}
+            style={{ width: `${visualFillPct}%` }}
             role="progressbar"
-            aria-valuenow={Math.round(barPct)}
+            aria-valuenow={Math.round(visualFillPct)}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`${Math.round(barPct)}% of weekly target used`}
+            aria-label={`${realPct}% of weekly target used`}
           />
         </div>
-        {/* Pace indicator */}
+        {/* Expected pace tick */}
         {!isOver && expectedPct < 100 && (
           <div
-            className="absolute top-0 h-4 w-1 bg-white/70 rounded-full"
-            style={{ left: `${expectedPct}%` }}
+            className="absolute top-0 h-4 w-1 bg-white/70 rounded-full pointer-events-none"
+            style={{ left: `${Math.min(expectedPct, 100)}%` }}
             title={`Expected usage at this point in the week (${expectedPct}%)`}
           />
         )}
       </div>
 
-      {/* Numbers */}
-      <div className="flex items-baseline justify-between">
+      {/* Target numbers & exact percentage text */}
+      <div className="flex items-baseline justify-between flex-wrap gap-2">
         <div>
           {isOver ? (
-            <p className="text-base font-bold text-rose-400" data-testid="target-status">
-              {total.toFixed(1)} kg / {target} kg target — over by {overBy.toFixed(1)} kg
+            <p className="text-sm sm:text-base font-bold text-rose-400" data-testid="target-status">
+              {total.toFixed(1)} kg / {target} kg target — {realPct}% of target ({pctOver}% over)
             </p>
           ) : (
-            <p className="text-base font-semibold text-gray-200" data-testid="target-status">
+            <p className="text-sm sm:text-base font-semibold text-gray-200" data-testid="target-status">
               {total.toFixed(1)} kg / {target} kg target
             </p>
           )}
           <p className="text-xs text-gray-400 mt-1">
-            {isAheadOfPace && !isOver
+            {isOver
+              ? `Exceeded weekly ceiling by ${overBy.toFixed(1)} kg CO₂`
+              : isAheadOfPace
               ? `⚡ Ahead of pace — ${(actualPct - expectedPct).toFixed(0)}% over expected at this point in the week`
-              : !isOver
-              ? `✅ On track — ${(expectedPct - actualPct).toFixed(0)}% below expected pace`
-              : ''}
+              : `✅ On track — ${(expectedPct - actualPct).toFixed(0)}% below expected pace`}
           </p>
         </div>
-        <span className={`text-2xl font-black ${isOver ? 'text-rose-400' : isAheadOfPace ? 'text-amber-400' : 'text-emerald-400'}`}>
-          {Math.round(barPct)}%
-        </span>
+        <div className="text-right">
+          <span className={`text-2xl sm:text-3xl font-black font-mono ${isOver ? 'text-rose-400' : isAheadOfPace ? 'text-amber-400' : 'text-emerald-400'}`}>
+            {realPct}%
+          </span>
+          <span className="block text-[10px] uppercase font-bold text-gray-500">
+            {isOver ? 'Exceeded' : 'Consumed'}
+          </span>
+        </div>
       </div>
     </div>
   )

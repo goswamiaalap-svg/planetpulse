@@ -30,7 +30,6 @@ export default function ActivityForm({ onSuccess }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
-  const [pendingSubmit, setPendingSubmit] = useState(false)
 
   const unit = getUnitLabel(type)
   const quantityNum = parseFloat(quantity)
@@ -38,7 +37,7 @@ export default function ActivityForm({ onSuccess }: Props) {
     ? calculateCO2(type, quantityNum)
     : null
 
-  const handleSubmit = async (e: React.FormEvent, confirmed = false) => {
+  const handleSubmit = async (e?: React.FormEvent, confirmed = false) => {
     e?.preventDefault()
     setError(null)
 
@@ -48,11 +47,10 @@ export default function ActivityForm({ onSuccess }: Props) {
       return
     }
 
-    // DP2: absurd input check
+    // DP2: absurd input check per-type ceiling
     const threshold = ABSURD_THRESHOLDS[type]
     if (!confirmed && quantityNum > threshold) {
       setShowWarning(true)
-      setPendingSubmit(true)
       return
     }
 
@@ -62,7 +60,7 @@ export default function ActivityForm({ onSuccess }: Props) {
       const res = await fetch('/api/activities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, quantity: quantityNum, co2_kg, date }),
+        body: JSON.stringify({ type, quantity: quantityNum, co2_kg, date, confirmed: true }),
       })
 
       if (!res.ok) {
@@ -74,7 +72,6 @@ export default function ActivityForm({ onSuccess }: Props) {
       setQuantity('')
       setDate(toISODateString(new Date()))
       setShowWarning(false)
-      setPendingSubmit(false)
 
       router.refresh()
       onSuccess?.()
@@ -87,10 +84,13 @@ export default function ActivityForm({ onSuccess }: Props) {
     }
   }
 
-  const handleConfirm = (e: React.MouseEvent) => {
+  const handleConfirm = () => {
     setShowWarning(false)
-    setPendingSubmit(false)
-    handleSubmit(e as unknown as React.FormEvent, true)
+    handleSubmit(undefined, true)
+  }
+
+  const handleCancel = () => {
+    setShowWarning(false)
   }
 
   return (
@@ -117,7 +117,7 @@ export default function ActivityForm({ onSuccess }: Props) {
         </div>
       )}
 
-      <form onSubmit={(e) => handleSubmit(e)} className="space-y-5" noValidate>
+      <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-5" noValidate>
         {/* Activity Type Selection */}
         <div>
           <label className="label">Activity Type</label>
@@ -128,7 +128,10 @@ export default function ActivityForm({ onSuccess }: Props) {
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setType(t)}
+                  onClick={() => {
+                    setType(t)
+                    setShowWarning(false)
+                  }}
                   className={`py-2.5 px-3 rounded-xl text-xs font-semibold text-left transition-all border flex items-center gap-2 ${
                     isSelected
                       ? 'bg-[#182923] border-emerald-500 text-emerald-300 shadow-md shadow-emerald-950/40'
@@ -160,7 +163,10 @@ export default function ActivityForm({ onSuccess }: Props) {
               step="any"
               placeholder={`Enter ${unit}`}
               value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              onChange={(e) => {
+                setQuantity(e.target.value)
+                setShowWarning(false)
+              }}
               className="input pr-16 font-mono"
               required
               data-testid="quantity-input"
@@ -195,6 +201,47 @@ export default function ActivityForm({ onSuccess }: Props) {
           />
         </div>
 
+        {/* DP2: Inline Absurd Input Confirmation Warning */}
+        {showWarning && (
+          <div
+            className="p-4 bg-amber-950/40 border-2 border-amber-500/60 rounded-xl space-y-3 animate-in fade-in zoom-in-95 duration-200"
+            data-testid="absurd-warning-dialog"
+            role="alert"
+          >
+            <div className="flex items-start gap-2.5">
+              <span className="text-xl flex-shrink-0">⚠️</span>
+              <div>
+                <p className="text-amber-300 font-semibold text-sm leading-snug" data-testid="warning-text">
+                  That&apos;s an unusually large entry — are you sure this is correct?
+                </p>
+                <p className="text-amber-400/80 text-xs mt-1">
+                  You entered <strong className="font-mono text-white">{quantity} {unit}</strong> for {getTypeName(type)} ({calculateCO2(type, quantityNum).toFixed(1)} kg CO₂). Standard threshold is {ABSURD_THRESHOLDS[type]} {unit}.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 pt-1 justify-end">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-1.5 rounded-lg border border-amber-500/30 text-amber-200 hover:bg-amber-900/40 text-xs font-semibold transition-all"
+                data-testid="warning-cancel"
+                aria-label="Cancel"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-gray-950 text-xs font-bold transition-all shadow-md"
+                data-testid="warning-confirm"
+                aria-label="Confirm"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -205,53 +252,6 @@ export default function ActivityForm({ onSuccess }: Props) {
           {loading ? 'Logging…' : 'Log Activity'}
         </button>
       </form>
-
-      {/* DP2: Absurd Input Confirmation Modal */}
-      {showWarning && (
-        <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="warning-title"
-          data-testid="absurd-warning-dialog"
-        >
-          <div className="card max-w-md w-full bg-[#131f1a] border-amber-500/30 shadow-2xl p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-2xl">⚠️</span>
-              <h2 id="warning-title" className="text-lg font-bold text-amber-400">
-                Unusually Large Value
-              </h2>
-            </div>
-            <p className="text-gray-300 text-sm mb-2 leading-relaxed">
-              You entered <strong className="font-mono text-white">{quantity} {unit}</strong> for {getTypeName(type)}. That produces{' '}
-              <strong className="font-mono text-emerald-400">
-                {calculateCO2(type, quantityNum).toFixed(1)} kg CO₂
-              </strong>.
-            </p>
-            <p className="text-gray-400 text-xs mb-6">
-              Normal thresholds are usually up to {ABSURD_THRESHOLDS[type]} {unit}. Did you mean to log this amount?
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                type="button"
-                onClick={() => { setShowWarning(false); setPendingSubmit(false); }}
-                className="btn-secondary text-sm"
-                data-testid="warning-edit"
-              >
-                Let me edit
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirm}
-                className="btn-primary text-sm bg-amber-500 hover:bg-amber-400 text-gray-950"
-                data-testid="warning-confirm"
-              >
-                Yes, log it
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
