@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "cheerio": "^1.2.0",
+    "lucide-react": "^1.46.0",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",

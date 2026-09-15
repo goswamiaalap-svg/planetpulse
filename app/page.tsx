@@ -10,6 +10,7 @@ import { getWeekRange, getWeekProgress, WeekProgress } from '@/lib/week'
 import { ActivityType, getTypeName, getUnitLabel, CATEGORY_COLORS } from '@/lib/co2'
 import { Activity } from '@/lib/supabase'
 import Link from 'next/link'
+import { Bot } from 'lucide-react'
 
 type TargetFormState = {
   value: string
@@ -139,14 +140,24 @@ export default function DashboardPage() {
           Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time AI sustainability insights &amp; statutory audit.
         </p>
 
-        {/* Action button */}
-        <Link
-          href="/log"
-          className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-7 py-2.5 rounded-full text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mb-4"
-        >
-          <span>Inspect &amp; Log Activity</span>
-          <span className="text-base">→</span>
-        </Link>
+        {/* Action buttons */}
+        <div className="flex items-center gap-4 mb-4 flex-wrap justify-center">
+          <Link
+            href="/log"
+            className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-7 py-2.5 rounded-full text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+          >
+            <span>Inspect &amp; Log Activity</span>
+            <span className="text-base">→</span>
+          </Link>
+          
+          <Link
+            href="#ai-coach"
+            className="bg-[#0c1015]/80 hover:bg-[#1a232b] text-emerald-400 font-bold px-6 py-2.5 rounded-full text-sm border border-emerald-500/30 shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 backdrop-blur-md"
+          >
+            <Bot className="w-5 h-5" />
+            <span>Ask AI Coach</span>
+          </Link>
+        </div>
 
         {/* Layout improvement 2: Thin horizontal category-breakdown strip */}
         {totalCO2 > 0 && breakdown.length > 0 && (
