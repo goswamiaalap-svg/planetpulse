@@ -14,12 +14,12 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
     return (
       <div className="card">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-800">Weekly Target</h2>
+          <h2 className="text-lg font-bold text-gray-200">Weekly Target</h2>
         </div>
         <div className="text-center py-4">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             No weekly target set.{' '}
-            <a href="#set-target" className="text-emerald-600 font-medium underline underline-offset-2">
+            <a href="#set-target" className="text-emerald-400 font-medium underline underline-offset-2 hover:text-emerald-300">
               Set a target
             </a>{' '}
             to track your pace.
@@ -29,7 +29,6 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
     )
   }
 
-  const percentage = target > 0 ? Math.min((total / target) * 100, 200) : 0
   const isOver = total > target
   const overBy = isOver ? +(total - target).toFixed(3) : 0
 
@@ -39,20 +38,20 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
   const isAheadOfPace = actualPct > expectedPct
 
   const barColor = isOver
-    ? 'bg-red-500'
+    ? 'bg-rose-500 shadow-rose-500/50'
     : isAheadOfPace
-    ? 'bg-amber-500'
-    : 'bg-emerald-500'
+    ? 'bg-amber-400 shadow-amber-400/50'
+    : 'bg-emerald-400 shadow-emerald-400/50'
 
   const barPct = Math.min((total / target) * 100, 100)
 
   return (
     <div className="card">
-      <div className="flex items-center justify-between mb-1">
-        <h2 className="text-lg font-semibold text-gray-800">Weekly Target</h2>
+      <div className="flex items-center justify-between mb-1.5">
+        <h2 className="text-lg font-bold text-gray-200">Weekly Target</h2>
         {isOver && (
-          <span className="text-xs font-semibold bg-red-100 text-red-700 px-2.5 py-1 rounded-full flex items-center gap-1">
-            ⚠️ Over target
+          <span className="text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse">
+            <span>⚠️</span> Over target
           </span>
         )}
       </div>
@@ -63,10 +62,10 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
       </p>
 
       {/* Progress bar */}
-      <div className="relative mb-3">
-        <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+      <div className="relative mb-3.5">
+        <div className="w-full bg-[#0d1613] border border-emerald-950/60 rounded-full h-4 overflow-hidden p-0.5">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+            className={`h-full rounded-full transition-all duration-700 shadow-sm ${barColor}`}
             style={{ width: `${barPct}%` }}
             role="progressbar"
             aria-valuenow={Math.round(barPct)}
@@ -78,7 +77,7 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
         {/* Pace indicator */}
         {!isOver && expectedPct < 100 && (
           <div
-            className="absolute top-0 h-4 w-0.5 bg-gray-400 opacity-50"
+            className="absolute top-0 h-4 w-1 bg-white/70 rounded-full"
             style={{ left: `${expectedPct}%` }}
             title={`Expected usage at this point in the week (${expectedPct}%)`}
           />
@@ -89,15 +88,15 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
       <div className="flex items-baseline justify-between">
         <div>
           {isOver ? (
-            <p className="text-base font-bold text-red-600" data-testid="target-status">
+            <p className="text-base font-bold text-rose-400" data-testid="target-status">
               {total.toFixed(1)} kg / {target} kg target — over by {overBy.toFixed(1)} kg
             </p>
           ) : (
-            <p className="text-base font-semibold text-gray-700" data-testid="target-status">
+            <p className="text-base font-semibold text-gray-200" data-testid="target-status">
               {total.toFixed(1)} kg / {target} kg target
             </p>
           )}
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-400 mt-1">
             {isAheadOfPace && !isOver
               ? `⚡ Ahead of pace — ${(actualPct - expectedPct).toFixed(0)}% over expected at this point in the week`
               : !isOver
@@ -105,7 +104,7 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
               : ''}
           </p>
         </div>
-        <span className={`text-2xl font-bold ${isOver ? 'text-red-600' : isAheadOfPace ? 'text-amber-600' : 'text-emerald-600'}`}>
+        <span className={`text-2xl font-black ${isOver ? 'text-rose-400' : isAheadOfPace ? 'text-amber-400' : 'text-emerald-400'}`}>
           {Math.round(barPct)}%
         </span>
       </div>

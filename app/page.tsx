@@ -101,7 +101,7 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="text-center py-16">
-        <p className="text-red-600 mb-4">⚠️ {error}</p>
+        <p className="text-rose-400 mb-4">⚠️ {error}</p>
         <button onClick={fetchData} className="btn-secondary">Retry</button>
       </div>
     )
@@ -112,8 +112,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">This Week&apos;s Footprint</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-3xl font-black text-gray-100 tracking-tight">This Week&apos;s Footprint</h1>
+          <p className="text-gray-400 text-sm mt-1">
             {from} → {to} · ISO week (Mon–Sun)
           </p>
         </div>
@@ -123,18 +123,28 @@ export default function DashboardPage() {
       </div>
 
       {/* Total CO2 hero */}
-      <div className="card bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100">
-        <div className="flex items-end gap-2">
-          <span
-            className="text-5xl font-black text-emerald-700"
-            data-testid="total-co2"
-            aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
-          >
-            {totalCO2.toFixed(2)}
-          </span>
-          <span className="text-xl text-emerald-600 mb-1 font-medium">kg CO₂</span>
+      <div className="card bg-gradient-to-br from-[#12281e] via-[#10231a] to-[#0c1813] border-emerald-500/20 relative overflow-hidden">
+        <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-end justify-between flex-wrap gap-4">
+          <div>
+            <div className="flex items-baseline gap-3">
+              <span
+                className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200"
+                data-testid="total-co2"
+                aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
+              >
+                {totalCO2.toFixed(2)}
+              </span>
+              <span className="text-xl text-emerald-400/80 font-bold">kg CO₂</span>
+            </div>
+            <p className="text-gray-400 text-sm mt-1 font-medium">Total emissions calculated this week</p>
+          </div>
+          {isOver && (
+            <span className="text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 px-3.5 py-1.5 rounded-full">
+              {Math.round((totalCO2 / (target || 1)) * 100)}% of weekly limit
+            </span>
+          )}
         </div>
-        <p className="text-emerald-600 text-sm mt-1">Total this week</p>
       </div>
 
       {/* Progress bar */}
@@ -152,16 +162,16 @@ export default function DashboardPage() {
 
       {/* Chart + breakdown */}
       <div className="card">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">By Category</h2>
+        <h2 className="text-lg font-bold text-gray-200 mb-4">By Category</h2>
         {activities.length === 0 ? (
           <div
-            className="text-center py-12 text-gray-400"
+            className="text-center py-12 text-gray-500"
             data-testid="empty-state"
           >
             <span className="text-4xl mb-3 block">🌍</span>
-            <p className="font-medium">No activities logged yet this week</p>
+            <p className="font-medium text-gray-400">No activities logged yet this week</p>
             <p className="text-sm mt-1">
-              <Link href="/log" className="text-emerald-600 underline">Log your first activity</Link> to see your footprint.
+              <Link href="/log" className="text-emerald-400 underline">Log your first activity</Link> to see your footprint.
             </p>
           </div>
         ) : (
@@ -171,17 +181,17 @@ export default function DashboardPage() {
 
       {/* Set weekly target */}
       <div className="card" id="set-target">
-        <h2 className="text-lg font-semibold text-gray-800 mb-3">
+        <h2 className="text-lg font-bold text-gray-200 mb-1.5">
           {target ? 'Update Weekly Target' : 'Set Weekly Target'}
         </h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-gray-400 mb-4">
           How many kg of CO₂ do you want to stay under this week?
         </p>
         <div className="flex gap-3">
           <div className="relative flex-1 max-w-xs">
             <input
               type="number"
-              className="input pr-12"
+              className="input pr-12 font-mono"
               placeholder={target ? String(target) : 'e.g. 20'}
               min="0.1"
               step="0.5"
@@ -190,7 +200,7 @@ export default function DashboardPage() {
               aria-label="Weekly CO2 target in kg"
               data-testid="target-input"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">kg</span>
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-semibold">kg</span>
           </div>
           <button
             onClick={handleSaveTarget}
@@ -207,8 +217,8 @@ export default function DashboardPage() {
       {activities.length > 0 && (
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">This Week&apos;s Activities</h2>
-            <Link href="/history" className="text-sm text-emerald-600 hover:underline">
+            <h2 className="text-lg font-bold text-gray-200">This Week&apos;s Activities</h2>
+            <Link href="/history" className="text-sm text-emerald-400 hover:text-emerald-300 font-medium hover:underline">
               View all →
             </Link>
           </div>
@@ -216,24 +226,24 @@ export default function DashboardPage() {
             {activities.slice(0, 5).map((a) => (
               <div
                 key={a.id}
-                className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between py-3 px-3.5 rounded-xl bg-[#0e1714]/60 border border-emerald-950/40 hover:border-emerald-800/40 transition-all"
                 data-activity-id={a.id}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm"
                     style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{getTypeName(a.type)}</p>
+                    <p className="text-sm font-semibold text-gray-200">{getTypeName(a.type)}</p>
                     <p className="text-xs text-gray-400">{a.date}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-700">
+                  <p className="text-sm font-bold font-mono text-emerald-400">
                     {Number(a.co2_kg).toFixed(3)} kg CO₂
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 font-medium">
                     {Number(a.quantity)} {getUnitLabel(a.type)}
                   </p>
                 </div>
@@ -241,9 +251,9 @@ export default function DashboardPage() {
             ))}
           </div>
           {activities.length > 5 && (
-            <p className="text-sm text-gray-400 text-center mt-3">
+            <p className="text-sm text-gray-400 text-center mt-4 font-medium">
               +{activities.length - 5} more —{' '}
-              <Link href="/history" className="text-emerald-600 hover:underline">view all in history</Link>
+              <Link href="/history" className="text-emerald-400 hover:underline">view all in history</Link>
             </p>
           )}
         </div>
@@ -251,4 +261,3 @@ export default function DashboardPage() {
     </div>
   )
 }
-

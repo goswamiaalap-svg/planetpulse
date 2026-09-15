@@ -76,7 +76,6 @@ export default function ActivityForm({ onSuccess }: Props) {
       setShowWarning(false)
       setPendingSubmit(false)
 
-      // Refresh dashboard data without full page reload
       router.refresh()
       onSuccess?.()
 
@@ -95,152 +94,164 @@ export default function ActivityForm({ onSuccess }: Props) {
   }
 
   return (
-    <div className="card max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Log an Activity</h1>
+    <div className="card max-w-lg mx-auto border-emerald-900/40">
+      <h1 className="text-2xl font-black text-gray-100 mb-6 tracking-tight">Log an Activity</h1>
 
       {success && (
         <div
-          className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg px-4 py-3 mb-4 flex items-center gap-2"
-          role="alert"
+          className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 rounded-xl text-sm flex items-center gap-2.5"
           data-testid="success-message"
         >
-          <span>✅</span>
-          <span>Activity logged successfully! Dashboard has been updated.</span>
+          <span className="text-lg">✅</span>
+          <span className="font-medium">Activity logged successfully!</span>
         </div>
       )}
 
       {error && (
         <div
-          className="bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 mb-4"
-          role="alert"
+          className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded-xl text-sm flex items-center gap-2.5"
+          data-testid="form-error"
         >
-          {error}
+          <span className="text-lg">⚠️</span>
+          <span>{error}</span>
         </div>
       )}
 
-      {/* DP2: Absurd input warning */}
-      {showWarning && (
-        <div
-          className="bg-amber-50 border border-amber-300 rounded-lg px-4 py-4 mb-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Unusual entry warning"
-          data-testid="absurd-warning"
-        >
-          <p className="font-semibold text-amber-800 mb-2">⚠️ Unusually large entry</p>
-          <p className="text-amber-700 text-sm mb-4">
-            {quantityNum.toLocaleString()} {unit} for a {getTypeName(type)} trip is much larger
-            than typical. Are you sure you want to log this?
-          </p>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="btn-primary text-sm"
-              data-testid="confirm-anyway"
-            >
-              Yes, log it anyway
-            </button>
-            <button
-              type="button"
-              onClick={() => { setShowWarning(false); setPendingSubmit(false) }}
-              className="btn-secondary text-sm"
-            >
-              Cancel
-            </button>
+      <form onSubmit={(e) => handleSubmit(e)} className="space-y-5" noValidate>
+        {/* Activity Type Selection */}
+        <div>
+          <label className="label">Activity Type</label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {ACTIVITY_TYPES.map((t) => {
+              const isSelected = type === t
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setType(t)}
+                  className={`py-2.5 px-3 rounded-xl text-xs font-semibold text-left transition-all border flex items-center gap-2 ${
+                    isSelected
+                      ? 'bg-[#182923] border-emerald-500 text-emerald-300 shadow-md shadow-emerald-950/40'
+                      : 'bg-[#0d1613] border-emerald-950/60 text-gray-400 hover:border-emerald-800/60 hover:text-gray-200'
+                  }`}
+                  data-testid={`type-select-${t}`}
+                >
+                  <span
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: CATEGORY_COLORS[t] }}
+                  />
+                  <span className="truncate">{getTypeName(t)}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Activity type */}
-        <div className="mb-4">
-          <label className="label" htmlFor="activity-type">Activity type</label>
-          <select
-            id="activity-type"
-            className="input"
-            value={type}
-            onChange={(e) => setType(e.target.value as ActivityType)}
-            aria-label="Select activity type"
-            data-testid="type-select"
-          >
-            {ACTIVITY_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {getTypeName(t)}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Quantity */}
-        <div className="mb-4">
-          <label className="label" htmlFor="quantity">
+        {/* Quantity Input */}
+        <div>
+          <label htmlFor="quantity" className="label">
             Quantity ({unit})
           </label>
           <div className="relative">
             <input
               id="quantity"
               type="number"
-              className="input pr-16"
-              placeholder={`Enter ${unit}`}
-              min="0"
+              min="0.01"
               step="any"
+              placeholder={`Enter ${unit}`}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
+              className="input pr-16 font-mono"
               required
-              aria-label={`Quantity in ${unit}`}
               data-testid="quantity-input"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">
+            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold uppercase">
               {unit}
             </span>
           </div>
         </div>
 
-        {/* Date */}
-        <div className="mb-6">
-          <label className="label" htmlFor="activity-date">Date</label>
+        {/* Real-time CO2 Preview */}
+        {estimatedCO2 !== null && (
+          <div className="p-3.5 bg-[#0e1915] border border-emerald-900/40 rounded-xl flex items-center justify-between text-sm">
+            <span className="text-gray-400 font-medium">Estimated CO₂:</span>
+            <span className="font-mono font-bold text-emerald-400 text-base" data-testid="co2-preview">
+              {estimatedCO2.toFixed(3)} kg
+            </span>
+          </div>
+        )}
+
+        {/* Date Input */}
+        <div>
+          <label htmlFor="date" className="label">Date</label>
           <input
-            id="activity-date"
+            id="date"
             type="date"
-            className="input"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            max={toISODateString(new Date())}
+            className="input font-mono"
             required
             data-testid="date-input"
           />
         </div>
 
-        {/* CO2 preview */}
-        {estimatedCO2 !== null && (
-          <div
-            className="mb-5 flex items-center gap-3 px-4 py-3 rounded-lg text-sm"
-            style={{
-              backgroundColor: `${CATEGORY_COLORS[type]}15`,
-              border: `1px solid ${CATEGORY_COLORS[type]}30`,
-            }}
-            data-testid="co2-preview"
-          >
-            <span className="text-lg">🌿</span>
-            <span>
-              Estimated:{' '}
-              <strong style={{ color: CATEGORY_COLORS[type] }}>
-                {estimatedCO2} kg CO₂
-              </strong>
-            </span>
-          </div>
-        )}
-
+        {/* Submit Button */}
         <button
           type="submit"
-          className="btn-primary w-full"
           disabled={loading}
-          data-testid="submit-button"
+          className="btn-primary w-full py-3"
+          data-testid="submit-activity"
         >
-          {loading ? 'Saving…' : 'Log Activity'}
+          {loading ? 'Logging…' : 'Log Activity'}
         </button>
       </form>
+
+      {/* DP2: Absurd Input Confirmation Modal */}
+      {showWarning && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="warning-title"
+          data-testid="absurd-warning-dialog"
+        >
+          <div className="card max-w-md w-full bg-[#131f1a] border-amber-500/30 shadow-2xl p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-2xl">⚠️</span>
+              <h2 id="warning-title" className="text-lg font-bold text-amber-400">
+                Unusually Large Value
+              </h2>
+            </div>
+            <p className="text-gray-300 text-sm mb-2 leading-relaxed">
+              You entered <strong className="font-mono text-white">{quantity} {unit}</strong> for {getTypeName(type)}. That produces{' '}
+              <strong className="font-mono text-emerald-400">
+                {calculateCO2(type, quantityNum).toFixed(1)} kg CO₂
+              </strong>.
+            </p>
+            <p className="text-gray-400 text-xs mb-6">
+              Normal thresholds are usually up to {ABSURD_THRESHOLDS[type]} {unit}. Did you mean to log this amount?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => { setShowWarning(false); setPendingSubmit(false); }}
+                className="btn-secondary text-sm"
+                data-testid="warning-edit"
+              >
+                Let me edit
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="btn-primary text-sm bg-amber-500 hover:bg-amber-400 text-gray-950"
+                data-testid="warning-confirm"
+              >
+                Yes, log it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
