@@ -368,8 +368,13 @@ export default function DashboardPage() {
       </div>
 
       {/* 5. AI Carbon Coach (RAG Knowledge Base & Simulation) */}
-      <div className="max-w-5xl mx-auto">
-        <AICarbonCoach />
+      <div id="ai-coach" className="max-w-5xl mx-auto scroll-mt-12 group">
+        <div className="relative rounded-3xl p-1 transition-all duration-700 bg-gradient-to-r hover:from-emerald-500/30 hover:via-teal-500/20 hover:to-transparent from-emerald-500/10 via-transparent to-transparent shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-[2rem] blur opacity-10 group-hover:opacity-30 transition duration-1000 group-hover:duration-200" />
+          <div className="relative rounded-2xl bg-black/40 ring-1 ring-white/10 backdrop-blur-sm">
+            <AICarbonCoach />
+          </div>
+        </div>
       </div>
     </div>
   )

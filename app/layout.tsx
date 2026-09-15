@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import Sidebar from '@/components/Sidebar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -38,11 +39,16 @@ export default function RootLayout({
         </div>
 
         {/* Foreground Page Content */}
-        <div className="relative z-10 min-h-screen flex flex-col">
-          <Navbar />
-          <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
-            {children}
-          </main>
+        <div className="relative z-10 min-h-screen flex">
+          <Sidebar />
+          <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-x-hidden">
+            <div className="lg:hidden">
+              <Navbar />
+            </div>
+            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+              {children}
+            </main>
+          </div>
         </div>
       </body>
     </html>
