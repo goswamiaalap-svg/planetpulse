@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import CO2Chart, { CategoryTotal } from '@/components/CO2Chart'
 import ProgressBar from '@/components/ProgressBar'
 import NudgePanel from '@/components/NudgePanel'
+import AICarbonCoach from '@/components/AICarbonCoach'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { getWeekRange, getWeekProgress, WeekProgress } from '@/lib/week'
 import { ActivityType, getTypeName, getUnitLabel, CATEGORY_COLORS } from '@/lib/co2'
@@ -363,8 +364,13 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+        </div>
+      </div>
+
+      {/* 5. AI Carbon Coach (RAG Knowledge Base & Simulation) */}
+      <div className="max-w-5xl mx-auto">
+        <AICarbonCoach />
+      </div>
     </div>
-  </div>
-</div>
   )
 }
