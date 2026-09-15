@@ -225,83 +225,101 @@ export default function AICarbonCoach() {
       )}
 
       {/* What-If Simulator Section */}
-      <div className="pt-4 border-t border-emerald-950/60">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-            <span>⚡</span> What-If Decarbonization Simulator
-          </h3>
-          <span className="text-[10px] text-gray-500 font-mono">Deterministic Engine</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
-          <div>
-            <label className="label text-[10px]">Current Activity</label>
-            <select
-              value={simFrom}
-              onChange={(e) => setSimFrom(e.target.value as ActivityType)}
-              className="input text-xs py-2"
-            >
-              <option value="car">Car travel</option>
-              <option value="flight">Flight</option>
-              <option value="non_veg_meal">Non-veg meal</option>
-              <option value="electricity">Electricity</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="label text-[10px]">Green Alternative</label>
-            <select
-              value={simTo}
-              onChange={(e) => setSimTo(e.target.value as ActivityType)}
-              className="input text-xs py-2"
-            >
-              <option value="bus">Bus transit</option>
-              <option value="veg_meal">Vegetarian meal</option>
-              <option value="car">Car travel</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="label text-[10px]">Quantity</label>
-            <input
-              type="number"
-              value={simQty}
-              onChange={(e) => setSimQty(e.target.value)}
-              min="1"
-              className="input text-xs py-2 font-mono"
-              placeholder="e.g. 20"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleRunSimulation}
-            disabled={simLoading}
-            className="btn-secondary text-xs py-2 px-3 border-emerald-500/30 text-emerald-300 hover:bg-emerald-950/40"
-          >
-            {simLoading ? 'Simulating…' : 'Simulate Savings'}
-          </button>
-        </div>
-
-        {/* Simulation Output */}
-        {simResult && (
-          <div className="mt-4 p-3 bg-[#0f1d16] border border-emerald-500/20 rounded-xl flex items-center justify-between flex-wrap gap-2 text-xs">
-            <div>
-              <p className="text-gray-200 font-medium">{simResult.explanation}</p>
-              <p className="text-gray-400 text-[11px] mt-0.5">
-                From {simResult.originalCO2.toFixed(2)} kg → {simResult.newCO2.toFixed(2)} kg CO₂
-              </p>
-            </div>
-            <div className="text-right">
-              <span className="text-emerald-400 font-black font-mono text-base">
-                -{simResult.savedCO2.toFixed(2)} kg
-              </span>
-              <span className="block text-[10px] text-emerald-300 font-bold">
-                {simResult.percentageSaved}% Reduction
+      <div className="mt-8 pt-6 border-t border-emerald-950/40">
+        <div className="bg-[#0c120e] rounded-2xl border border-emerald-500/20 p-5 shadow-lg relative overflow-hidden">
+          {/* Background subtle glow */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="mb-5 relative z-10">
+            <div className="flex items-center justify-between flex-wrap gap-2 mb-1.5">
+              <h3 className="text-sm font-black text-emerald-400 tracking-wide flex items-center gap-2">
+                <span className="text-lg">⚖️</span> What-If Decarbonization Simulator
+              </h3>
+              <span className="bg-emerald-950 text-emerald-300 text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-800">
+                Deterministic Engine
               </span>
             </div>
+            <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">
+              Curious about your impact? Select a typical activity and a green alternative to instantly calculate your exact carbon savings. Test the numbers before you commit to a lifestyle change!
+            </p>
           </div>
-        )}
+
+          <div className="flex flex-col md:flex-row items-center gap-3 relative z-10 bg-black/30 p-3 rounded-xl border border-white/5">
+            <div className="flex-1 w-full relative">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider absolute -top-2 left-2 bg-[#0c120e] px-1">Current Habit</label>
+              <select
+                value={simFrom}
+                onChange={(e) => setSimFrom(e.target.value as ActivityType)}
+                className="w-full bg-transparent border border-white/10 rounded-lg text-sm py-2.5 px-3 text-gray-200 outline-none focus:border-emerald-500/50"
+              >
+                <option value="car">Car travel</option>
+                <option value="flight">Flight</option>
+                <option value="non_veg_meal">Non-veg meal</option>
+                <option value="electricity">Electricity</option>
+              </select>
+            </div>
+
+            <div className="text-gray-500 rotate-90 md:rotate-0 flex-shrink-0">
+              <span className="block text-lg">➞</span>
+            </div>
+
+            <div className="flex-1 w-full relative">
+              <label className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider absolute -top-2 left-2 bg-[#0c120e] px-1">Green Swap</label>
+              <select
+                value={simTo}
+                onChange={(e) => setSimTo(e.target.value as ActivityType)}
+                className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-lg text-sm py-2.5 px-3 text-emerald-200 outline-none focus:border-emerald-500"
+              >
+                <option value="bus">Bus transit</option>
+                <option value="veg_meal">Vegetarian meal</option>
+                <option value="car">Carpool / Efficient Car</option>
+              </select>
+            </div>
+
+            <div className="w-full md:w-28 flex-shrink-0 relative">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider absolute -top-2 left-2 bg-[#0c120e] px-1">Amount</label>
+              <input
+                type="number"
+                value={simQty}
+                onChange={(e) => setSimQty(e.target.value)}
+                min="1"
+                className="w-full bg-transparent border border-white/10 rounded-lg text-sm py-2.5 px-3 font-mono text-gray-200 outline-none focus:border-emerald-500/50"
+                placeholder="Qty (km)"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleRunSimulation}
+              disabled={simLoading}
+              className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2.5 px-5 rounded-lg shadow-lg hover:shadow-emerald-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex-shrink-0 whitespace-nowrap"
+            >
+              {simLoading ? 'Calculating…' : 'Simulate'}
+            </button>
+          </div>
+
+          {/* Simulation Output */}
+          {simResult && (
+            <div className="mt-4 p-4 bg-gradient-to-r from-emerald-950/60 to-[#0c120e] border border-emerald-500/30 rounded-xl flex items-center justify-between flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex-1 min-w-[200px]">
+                <p className="text-gray-200 text-sm font-medium leading-relaxed">{simResult.explanation}</p>
+                <div className="flex items-center gap-3 mt-1.5 text-xs font-mono text-gray-400">
+                  <span className="line-through opacity-70">{simResult.originalCO2.toFixed(1)} kg CO₂</span>
+                  <span className="text-gray-600">→</span>
+                  <span className="text-emerald-400 font-bold">{simResult.newCO2.toFixed(1)} kg CO₂</span>
+                </div>
+              </div>
+              <div className="text-right bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-500/20 text-emerald-400">
+                <span className="block font-black font-mono text-2xl drop-shadow-sm">
+                  -{simResult.savedCO2.toFixed(2)} kg
+                </span>
+                <span className="block text-[10px] uppercase font-bold tracking-wider opacity-80 mt-0.5">
+                  Total Saved ({simResult.percentageSaved}% less)
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
