@@ -64,6 +64,19 @@ export default function DashboardPage() {
     fetchData()
   }, [fetchData])
 
+  // Handle hash scrolling after data finishes loading
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined' && window.location.hash) {
+      const id = window.location.hash.substring(1)
+      const element = document.getElementById(id)
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }, 100) // Small delay to ensure DOM layout is complete
+      }
+    }
+  }, [loading])
+
   // Compute totals
   const totalCO2 = activities.reduce((sum, a) => sum + Number(a.co2_kg), 0)
 
