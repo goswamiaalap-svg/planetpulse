@@ -3,6 +3,10 @@ import { ActivityType, getTypeName } from '@/lib/co2'
 
 export interface UserContext {
   weeklyTotalCO2: number
+  previousWeekTotalCO2: number
+  weeklyDeltaCO2: number
+  weeklyPercentChange: number
+  isIncrease: boolean
   weeklyTarget: number | null
   targetExceededBy: number
   percentTargetUsed: number
@@ -20,9 +24,15 @@ export interface UserContext {
  */
 export function buildUserContext(
   activities: Activity[],
-  weeklyTarget: number | null
+  weeklyTarget: number | null,
+  previousWeekActivities: Activity[] = []
 ): UserContext {
   const total = activities.reduce((sum, a) => sum + Number(a.co2_kg), 0)
+  const prevTotal = previousWeekActivities.reduce((sum, a) => sum + Number(a.co2_kg), 0)
+  const delta = +(total - prevTotal).toFixed(2)
+  const percentChange = prevTotal > 0 ? Math.round(((total - prevTotal) / prevTotal) * 100) : 0
+  const isIncrease = total > prevTotal
+
   const target = weeklyTarget ?? null
 
   const breakdownMap: Partial<Record<ActivityType, number>> = {}
@@ -56,6 +66,10 @@ export function buildUserContext(
 
   return {
     weeklyTotalCO2: +total.toFixed(2),
+    previousWeekTotalCO2: +prevTotal.toFixed(2),
+    weeklyDeltaCO2: delta,
+    weeklyPercentChange: percentChange,
+    isIncrease,
     weeklyTarget: target,
     targetExceededBy: exceededBy,
     percentTargetUsed: percentUsed,

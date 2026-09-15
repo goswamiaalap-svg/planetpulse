@@ -30,18 +30,21 @@ export async function POST(req: NextRequest) {
   try {
     const supabase = getSupabase()
     const { from, to } = getWeekRange()
+    const { from: prevFrom, to: prevTo } = getPreviousWeekRange()
 
-    // 1. Fetch current week's activities and settings for contextual grounding
-    const [activitiesRes, settingsRes] = await Promise.all([
+    // 1. Fetch current week's activities, previous week, and settings for contextual grounding
+    const [activitiesRes, prevActivitiesRes, settingsRes] = await Promise.all([
       supabase.from('activities').select('*').gte('date', from).lte('date', to),
+      supabase.from('activities').select('*').gte('date', prevFrom).lte('date', prevTo),
       supabase.from('settings').select('weekly_target_kg').eq('id', 1).maybeSingle(),
     ])
 
     const activities: Activity[] = activitiesRes.data || []
+    const prevActivities: Activity[] = prevActivitiesRes.data || []
     const weeklyTarget = settingsRes.data?.weekly_target_kg ?? null
 
-    // 2. Build non-PII User Context
-    const userContext = buildUserContext(activities, weeklyTarget)
+    // 2. Build non-PII User Context with previous week comparison
+    const userContext = buildUserContext(activities, weeklyTarget, prevActivities)
 
     // 3. Consult Carbon Coach Service
     const coachService = new CarbonCoachService()

@@ -38,6 +38,15 @@ export function getWeekRange(date: Date = new Date()): { from: string; to: strin
 }
 
 /**
+ * Get the previous week's date range as ISO strings.
+ */
+export function getPreviousWeekRange(date: Date = new Date()): { from: string; to: string } {
+  const prevDate = new Date(date)
+  prevDate.setDate(prevDate.getDate() - 7)
+  return getWeekRange(prevDate)
+}
+
+/**
  * Convert a Date to a YYYY-MM-DD string in local time.
  */
 export function toISODateString(date: Date): string {
