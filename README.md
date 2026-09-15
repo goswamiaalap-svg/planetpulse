@@ -1,7 +1,7 @@
 # PlanetPulse 🌱
 
 **Hackathon Track:** Track 2 — Real-World AI Products (Climate Tech Brief)  
-**Hackathon ID:** [PASTE HERE]
+**Hackathon ID:** AZIS-HA833B
 
 ---
 
