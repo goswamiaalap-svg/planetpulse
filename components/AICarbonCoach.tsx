@@ -252,10 +252,10 @@ export default function AICarbonCoach() {
                 onChange={(e) => setSimFrom(e.target.value as ActivityType)}
                 className="w-full bg-transparent border border-white/10 rounded-lg text-sm py-2.5 px-3 text-gray-200 outline-none focus:border-emerald-500/50"
               >
-                <option value="car">Car travel</option>
-                <option value="flight">Flight</option>
-                <option value="non_veg_meal">Non-veg meal</option>
-                <option value="electricity">Electricity</option>
+                <option value="car" className="bg-[#0c120e] text-gray-200">Car travel</option>
+                <option value="flight" className="bg-[#0c120e] text-gray-200">Flight</option>
+                <option value="non_veg_meal" className="bg-[#0c120e] text-gray-200">Non-veg meal</option>
+                <option value="electricity" className="bg-[#0c120e] text-gray-200">Electricity</option>
               </select>
             </div>
 
@@ -270,9 +270,9 @@ export default function AICarbonCoach() {
                 onChange={(e) => setSimTo(e.target.value as ActivityType)}
                 className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-lg text-sm py-2.5 px-3 text-emerald-200 outline-none focus:border-emerald-500"
               >
-                <option value="bus">Bus transit</option>
-                <option value="veg_meal">Vegetarian meal</option>
-                <option value="car">Carpool / Efficient Car</option>
+                <option value="bus" className="bg-[#0c120e] text-emerald-400">Bus transit</option>
+                <option value="veg_meal" className="bg-[#0c120e] text-emerald-400">Vegetarian meal</option>
+                <option value="car" className="bg-[#0c120e] text-emerald-400">Carpool / Efficient Car</option>
               </select>
             </div>
 

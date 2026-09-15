@@ -27,10 +27,7 @@ export default function Sidebar() {
       <div className={`flex items-center mb-10 mt-2 ${isOpen ? 'justify-between' : 'justify-center'}`}>
         {isOpen && (
           <Link href="/" className="flex items-center gap-3 group overflow-hidden pl-2">
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
-              <img src="/logo.png" alt="PlanetPulse" className="w-7 h-7 object-contain" />
-            </div>
-            <span className="font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-white text-lg whitespace-nowrap">
+            <span className="font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-white text-lg whitespace-nowrap group-hover:scale-105 transition-transform origin-left">
               PlanetPulse
             </span>
           </Link>
@@ -70,7 +67,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Quick Action Bottom */}
-      <div className="mt-auto overflow-hidden">
+      <div className="mt-auto overflow-hidden flex flex-col items-center gap-6">
         <Link
           href="/log"
           title={!isOpen ? "New Entry" : undefined}
@@ -80,6 +77,13 @@ export default function Sidebar() {
         >
           <Plus className="w-5 h-5 flex-shrink-0" />
           {isOpen && <span>New Entry</span>}
+        </Link>
+        
+        {/* Permanent Bottom Logo */}
+        <Link href="/" className="block opacity-80 hover:opacity-100 transition-opacity pb-2">
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-lg overflow-hidden">
+            <img src="/logo.png" alt="PlanetPulse" className="w-7 h-7 object-contain" />
+          </div>
         </Link>
       </div>
     </aside>
