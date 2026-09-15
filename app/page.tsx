@@ -115,8 +115,8 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Cinematic Hero Section with compact vertical padding */}
-      <section className="text-center pt-2 pb-1 max-w-3xl mx-auto flex flex-col items-center">
+      {/* 1. Cinematic Hero Section with improved vertical spacing */}
+      <section className="text-center pt-8 pb-6 max-w-3xl mx-auto flex flex-col items-center">
         {/* Trust pill row */}
         <div className="inline-flex items-center gap-2 bg-[#28282a]/80 backdrop-blur-md border border-white/20 rounded-full py-1 px-3.5 mb-3 shadow-lg">
           <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-[10px] font-bold">
@@ -136,7 +136,7 @@ export default function DashboardPage() {
         </h1>
 
         <p className="text-gray-300 text-xs sm:text-sm max-w-lg leading-relaxed mb-4 font-normal">
-          Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time GPT-4o sustainability insights &amp; statutory audit.
+          Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time AI sustainability insights &amp; statutory audit.
         </p>
 
         {/* Action button */}

@@ -66,9 +66,6 @@ export default function NudgePanel({ total, target, breakdown, isOver }: Props) 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1.5">
             <h3 className="font-bold text-emerald-400 text-sm tracking-wide uppercase">AI Sustainability Nudge</h3>
-            <span className="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 px-2 py-0.5 rounded-full font-medium">
-              GPT-4o
-            </span>
           </div>
           {loading ? (
             <p className="text-emerald-300/80 text-sm animate-pulse">Consulting AI advisor for tailored habits…</p>
