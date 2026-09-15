@@ -97,10 +97,10 @@ export default function DashboardPage() {
     }
   }
 
-  if (loading) return <LoadingSpinner message="Loading your carbon dashboard…" />
+  if (loading) return <LoadingSpinner message="Loading your carbon intelligence dashboard…" />
   if (error) {
     return (
-      <div className="text-center py-16">
+      <div className="card text-center py-16 max-w-lg mx-auto mt-12">
         <p className="text-rose-400 mb-4">⚠️ {error}</p>
         <button onClick={fetchData} className="btn-secondary">Retry</button>
       </div>
@@ -108,156 +108,208 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">This Week&apos;s Footprint</h1>
-          <p className="text-emerald-300/70 text-sm mt-1 font-medium">
-            {from} → {to} · ISO week (Mon–Sun)
-          </p>
+    <div className="space-y-8">
+      {/* 1. Cinematic Hero Section matching PramaanCheck */}
+      <section className="text-center pt-8 pb-4 max-w-3xl mx-auto flex flex-col items-center">
+        {/* Trust pill row */}
+        <div className="inline-flex items-center gap-2 bg-[#28282a]/80 backdrop-blur-md border border-white/20 rounded-full py-1.5 px-4 mb-6 shadow-xl">
+          <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs font-bold">
+            🌱
+          </span>
+          <span className="text-xs font-medium tracking-wide text-gray-200">
+            Real-Time Carbon Footprint Intelligence • Climate Tech
+          </span>
         </div>
-        <Link href="/log" className="btn-primary hidden sm:inline-flex items-center gap-2">
-          <span>+</span> Log Activity
-        </Link>
-      </div>
 
-      {/* Total CO2 hero */}
-      <div className="card bg-gradient-to-br from-[#12281e] via-[#10231a] to-[#0c1813] border-emerald-500/20 relative overflow-hidden">
-        <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <div className="flex items-baseline gap-3">
-              <span
-                className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200"
-                data-testid="total-co2"
-                aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
-              >
-                {totalCO2.toFixed(2)}
-              </span>
-              <span className="text-xl text-emerald-400/80 font-bold">kg CO₂</span>
-            </div>
-            <p className="text-gray-400 text-sm mt-1 font-medium">Total emissions calculated this week</p>
-          </div>
-          {isOver && (
-            <span className="text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 px-3.5 py-1.5 rounded-full">
-              {Math.round((totalCO2 / (target || 1)) * 100)}% of weekly limit
-            </span>
-          )}
-        </div>
-      </div>
+        {/* Big Bold Headline matching PramaanCheck */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-white leading-none mb-4 drop-shadow-md">
+          PLANETPULSE
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-white to-teal-200">
+            CARBON AI TRACKER
+          </span>
+        </h1>
 
-      {/* Progress bar */}
-      <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
-
-      {/* Nudge panel (only when over target) */}
-      {isOver && (
-        <NudgePanel
-          total={totalCO2}
-          target={target!}
-          breakdown={breakdown}
-          isOver={isOver}
-        />
-      )}
-
-      {/* Chart + breakdown */}
-      <div className="card">
-        <h2 className="text-lg font-bold text-gray-200 mb-4">By Category</h2>
-        {activities.length === 0 ? (
-          <div
-            className="text-center py-12 text-gray-500"
-            data-testid="empty-state"
-          >
-            <span className="text-4xl mb-3 block">🌍</span>
-            <p className="font-medium text-gray-400">No activities logged yet this week</p>
-            <p className="text-sm mt-1">
-              <Link href="/log" className="text-emerald-400 underline">Log your first activity</Link> to see your footprint.
-            </p>
-          </div>
-        ) : (
-          <CO2Chart data={breakdown} />
-        )}
-      </div>
-
-      {/* Set weekly target */}
-      <div className="card" id="set-target">
-        <h2 className="text-lg font-bold text-gray-200 mb-1.5">
-          {target ? 'Update Weekly Target' : 'Set Weekly Target'}
-        </h2>
-        <p className="text-sm text-gray-400 mb-4">
-          How many kg of CO₂ do you want to stay under this week?
+        <p className="text-gray-300 text-sm sm:text-base max-w-xl leading-relaxed mb-6 font-normal">
+          Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time GPT-4o sustainability insights &amp; statutory audit.
         </p>
-        <div className="flex gap-3">
-          <div className="relative flex-1 max-w-xs">
-            <input
-              type="number"
-              className="input pr-12 font-mono"
-              placeholder={target ? String(target) : 'e.g. 20'}
-              min="0.1"
-              step="0.5"
-              value={targetForm.value}
-              onChange={(e) => setTargetForm((f) => ({ ...f, value: e.target.value }))}
-              aria-label="Weekly CO2 target in kg"
-              data-testid="target-input"
-            />
-            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-semibold">kg</span>
-          </div>
-          <button
-            onClick={handleSaveTarget}
-            disabled={targetForm.saving || !targetForm.value}
-            className="btn-primary"
-            data-testid="save-target-button"
+
+        {/* Big Rounded CTA Button matching PramaanCheck */}
+        <Link
+          href="/log"
+          className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-8 py-3.5 rounded-full text-base shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+        >
+          <span>Inspect &amp; Log Activity</span>
+          <span className="text-lg">→</span>
+        </Link>
+      </section>
+
+      {/* 2. Stats Row matching PramaanCheck Stats Footer */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        {/* Stat 1: Total CO2 */}
+        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
+          <div className="text-xs font-mono font-bold text-emerald-400 mb-1">&lt; kg CO₂</div>
+          <div
+            className="text-3xl sm:text-4xl font-black text-white font-mono"
+            data-testid="total-co2"
+            aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
           >
-            {targetForm.saving ? 'Saving…' : targetForm.saved ? '✅ Saved!' : 'Save target'}
-          </button>
+            {totalCO2.toFixed(1)}
+          </div>
+          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+            This Week&apos;s Total
+          </div>
+        </div>
+
+        {/* Stat 2: Target Limit */}
+        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
+          <div className="text-xs font-mono font-bold text-amber-400 mb-1">% TARGET</div>
+          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
+            {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
+          </div>
+          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+            Target Consumption
+          </div>
+        </div>
+
+        {/* Stat 3: Week Day Progress */}
+        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
+          <div className="text-xs font-mono font-bold text-teal-400 mb-1">* WEEK</div>
+          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
+            {weekProgress.dayOfWeek}/7
+          </div>
+          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+            ISO Days Elapsed
+          </div>
+        </div>
+
+        {/* Stat 4: Activities count */}
+        <div className="card text-center py-5 px-4 border-white/10 hover:border-emerald-500/40 transition-colors">
+          <div className="text-xs font-mono font-bold text-purple-400 mb-1"># ENTRIES</div>
+          <div className="text-3xl sm:text-4xl font-black text-white font-mono">
+            {activities.length}
+          </div>
+          <div className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+            Activities Logged
+          </div>
         </div>
       </div>
 
-      {/* Recent activities (this week) */}
-      {activities.length > 0 && (
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-200">This Week&apos;s Activities</h2>
-            <Link href="/history" className="text-sm text-emerald-400 hover:text-emerald-300 font-medium hover:underline">
-              View all →
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {activities.slice(0, 5).map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center justify-between py-3 px-3.5 rounded-xl bg-[#0e1714]/60 border border-emerald-950/40 hover:border-emerald-800/40 transition-all"
-                data-activity-id={a.id}
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm"
-                    style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-gray-200">{getTypeName(a.type)}</p>
-                    <p className="text-xs text-gray-400">{a.date}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold font-mono text-emerald-400">
-                    {Number(a.co2_kg).toFixed(3)} kg CO₂
-                  </p>
-                  <p className="text-xs text-gray-400 font-medium">
-                    {Number(a.quantity)} {getUnitLabel(a.type)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          {activities.length > 5 && (
-            <p className="text-sm text-gray-400 text-center mt-4 font-medium">
-              +{activities.length - 5} more —{' '}
-              <Link href="/history" className="text-emerald-400 hover:underline">view all in history</Link>
-            </p>
+      {/* 3. Horizontal Grid: Target Progress (Left) + AI Nudge (Right) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto items-stretch">
+        {/* Left Column: Weekly Target */}
+        <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
+
+        {/* Right Column: AI Nudge */}
+        <div className="flex flex-col justify-center">
+          {isOver ? (
+            <NudgePanel
+              total={totalCO2}
+              target={target!}
+              breakdown={breakdown}
+              isOver={isOver}
+            />
+          ) : (
+            <div className="card h-full flex flex-col justify-center items-center text-center p-6 border-white/10">
+              <span className="text-3xl mb-2">🌿</span>
+              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Within Target Limit</h3>
+              <p className="text-xs text-gray-300 leading-relaxed max-w-sm">
+                You are on track with your weekly carbon target. Keep choosing green transit and plant-forward meals!
+              </p>
+            </div>
           )}
         </div>
-      )}
+      </div>
+
+      {/* 4. Horizontal Grid: Category Breakdown (Left) + Activities & Target Controls (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
+        {/* Left 2 Cols: Category Chart & Table */}
+        <div className="card lg:col-span-2">
+          <h2 className="text-base font-bold text-white uppercase tracking-wider mb-4 flex items-center justify-between">
+            <span>Emissions By Category</span>
+            <span className="text-xs font-mono text-gray-400 font-normal">6 Factors Audit</span>
+          </h2>
+          {activities.length === 0 ? (
+            <div className="text-center py-12 text-gray-400" data-testid="empty-state">
+              <span className="text-4xl mb-3 block">🌍</span>
+              <p className="font-medium">No activities logged yet this week</p>
+              <p className="text-sm mt-1">
+                <Link href="/log" className="text-emerald-400 underline">Log your first activity</Link>
+              </p>
+            </div>
+          ) : (
+            <CO2Chart data={breakdown} />
+          )}
+        </div>
+
+        {/* Right 1 Col: Set Target & Recent Activities */}
+        <div className="space-y-6">
+          {/* Target Update Form */}
+          <div className="card" id="set-target">
+            <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1.5">
+              {target ? 'Update Target Goal' : 'Configure Weekly Target'}
+            </h3>
+            <p className="text-xs text-gray-300 mb-3 leading-relaxed">
+              Define your weekly CO₂ threshold in kg.
+            </p>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="number"
+                  className="input pr-10 font-mono text-sm py-2"
+                  placeholder={target ? String(target) : 'e.g. 30'}
+                  min="0.1"
+                  step="0.5"
+                  value={targetForm.value}
+                  onChange={(e) => setTargetForm((f) => ({ ...f, value: e.target.value }))}
+                  aria-label="Weekly CO2 target in kg"
+                  data-testid="target-input"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold font-mono">kg</span>
+              </div>
+              <button
+                onClick={handleSaveTarget}
+                disabled={targetForm.saving || !targetForm.value}
+                className="btn-primary text-xs py-2 px-4 whitespace-nowrap"
+                data-testid="save-target-button"
+              >
+                {targetForm.saving ? 'Saving…' : targetForm.saved ? '✓ Set' : 'Save'}
+              </button>
+            </div>
+          </div>
+
+          {/* Recent Activities List */}
+          {activities.length > 0 && (
+            <div className="card">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Recent Logs</h3>
+                <Link href="/history" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold hover:underline">
+                  All ({activities.length}) →
+                </Link>
+              </div>
+              <div className="space-y-2">
+                {activities.slice(0, 4).map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between py-2 px-2.5 rounded-lg bg-black/40 border border-white/5 hover:border-white/15 transition-all text-xs"
+                    data-activity-id={a.id}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
+                      />
+                      <span className="font-semibold text-gray-200 truncate">{getTypeName(a.type)}</span>
+                    </div>
+                    <div className="text-right font-mono flex-shrink-0">
+                      <span className="font-bold text-white">{Number(a.co2_kg).toFixed(2)} kg</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
