@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-10-01T09:03:48.864Z",
+  "totalScenarios": 6,
+  "passedCount": 6,
+  "faithfulnessAvg": 1,
+  "relevancyAvg": 0.992,
+  "scenarios": [
+    {
+      "scenario": "Scenario A: Complete Support",
+      "scenarioDescription": "Retrieved context contains complete factual evidence for emission factor.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 1,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Successfully answered strictly from context with exact factor 0.20 kg CO2/km."
+    },
+    {
+      "scenario": "Scenario B: Partial Support",
+      "scenarioDescription": "Context supports CO2 emissions but lacks dollar financial data.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 0.95,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Accurately answered CO2 calculation while explicitly acknowledging missing financial data."
+    },
+    {
+      "scenario": "Scenario C: Missing Information (Abstention)",
+      "scenarioDescription": "Context has zero evidence for submarine manufacturing.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 1,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Correctly triggered abstention instead of hallucinating a manufacturing factor."
+    },
+    {
+      "scenario": "Scenario D: Contradictory Question",
+      "scenarioDescription": "Question contains false premise that bus emits more than car.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 1,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Faithfully corrected the erroneous user premise using grounded emission benchmarks."
+    },
+    {
+      "scenario": "Scenario E: Distractor & Irrelevant Context",
+      "scenarioDescription": "Context contains irrelevant noise alongside electricity factor.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 1,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Successfully extracted exact electricity factor without getting distracted by irrelevant noise."
+    },
+    {
+      "scenario": "Scenario F: Conflicting Benchmarks",
+      "scenarioDescription": "Context mentions multiple estimates.",
+      "passed": true,
+      "faithfulnessScore": 1,
+      "relevancyScore": 1,
+      "refusalCompliance": true,
+      "violations": [],
+      "notes": "Consistently adhered to PlanetPulse benchmark 0.50 kg CO2."
+    }
+  ]
+}

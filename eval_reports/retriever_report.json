@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-10-01T09:04:12.034Z",
+  "totalInDomainQueries": 50,
+  "metricsByK": {
+    "1": {
+      "k": 1,
+      "hitRate": 0.84,
+      "precision": 0.84,
+      "recall": 0.286,
+      "mrr": 0.84,
+      "avgScore": 0.016
+    },
+    "3": {
+      "k": 3,
+      "hitRate": 0.94,
+      "precision": 0.767,
+      "recall": 0.782,
+      "mrr": 0.883,
+      "avgScore": 0.016
+    },
+    "5": {
+      "k": 5,
+      "hitRate": 0.96,
+      "precision": 0.688,
+      "recall": 1.17,
+      "mrr": 0.888,
+      "avgScore": 0.016
+    },
+    "8": {
+      "k": 8,
+      "hitRate": 0.98,
+      "precision": 0.652,
+      "recall": 1.776,
+      "mrr": 0.891,
+      "avgScore": 0.016
+    },
+    "10": {
+      "k": 10,
+      "hitRate": 0.98,
+      "precision": 0.64,
+      "recall": 2.177,
+      "mrr": 0.891,
+      "avgScore": 0.016
+    }
+  },
+  "bestK": 3,
+  "p50LatencyMs": 1,
+  "p95LatencyMs": 2,
+  "avgLatencyMs": 1.2,
+  "categoryPerformance": {
+    "transportation": {
+      "hitRate": 0.733,
+      "avgTopScore": 0.016
+    },
+    "energy": {
+      "hitRate": 0.625,
+      "avgTopScore": 0.016
+    },
+    "food": {
+      "hitRate": 0.625,
+      "avgTopScore": 0.016
+    },
+    "general": {
+      "hitRate": 0.684,
+      "avgTopScore": 0.015
+    }
+  }
+}

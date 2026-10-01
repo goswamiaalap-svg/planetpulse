@@ -1,3 +1,8 @@
+/**
+ * lib/rag/vectorstore/vectorStore.ts
+ * High-performance vector store with hybrid search, Reciprocal Rank Fusion, and strict thresholding
+ */
+
 import { KnowledgeChunk } from '../ingestion/loader'
 
 export interface SearchOptions {
@@ -10,6 +15,8 @@ export interface SearchOptions {
 export interface SearchResult {
   chunk: KnowledgeChunk
   score: number
+  rawSimilarity?: number
+  matchType?: 'vector' | 'keyword' | 'hybrid'
 }
 
 export interface VectorStore {
@@ -21,7 +28,7 @@ export interface VectorStore {
 }
 
 /**
- * In-Memory & Supabase-compatible VectorStore implementation
+ * In-Memory VectorStore implementation with RRF and metadata filtering
  */
 export class MemoryVectorStore implements VectorStore {
   private chunks: KnowledgeChunk[] = []
@@ -39,7 +46,7 @@ export class MemoryVectorStore implements VectorStore {
 
   async similaritySearch(queryEmbedding: number[], options: SearchOptions = {}): Promise<SearchResult[]> {
     const topK = options.topK ?? 4
-    const threshold = options.threshold ?? 0.2
+    const threshold = options.threshold ?? 0.35
 
     let candidates = this.chunks
 
@@ -57,7 +64,7 @@ export class MemoryVectorStore implements VectorStore {
       if (!chunk.embedding || chunk.embedding.length === 0) continue
       const score = cosineSimilarity(queryEmbedding, chunk.embedding)
       if (score >= threshold) {
-        scored.push({ chunk, score })
+        scored.push({ chunk, score, rawSimilarity: score, matchType: 'vector' })
       }
     }
 
@@ -67,11 +74,16 @@ export class MemoryVectorStore implements VectorStore {
 
   async keywordSearch(query: string, options: SearchOptions = {}): Promise<SearchResult[]> {
     const topK = options.topK ?? 4
-    const terms = query.toLowerCase().split(/\s+/).filter((t) => t.length > 2)
+    const terms = query.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length > 2)
+
+    if (terms.length === 0) return []
 
     let candidates = this.chunks
     if (options.topic) {
       candidates = candidates.filter((c) => c.topic.toLowerCase() === options.topic?.toLowerCase())
+    }
+    if (options.subtopic) {
+      candidates = candidates.filter((c) => c.subtopic.toLowerCase() === options.subtopic?.toLowerCase())
     }
 
     const scored: SearchResult[] = []
@@ -85,7 +97,7 @@ export class MemoryVectorStore implements VectorStore {
 
       if (matches > 0) {
         const score = matches / terms.length
-        scored.push({ chunk, score })
+        scored.push({ chunk, score, matchType: 'keyword' })
       }
     }
 
@@ -95,18 +107,24 @@ export class MemoryVectorStore implements VectorStore {
 
   async hybridSearch(query: string, queryEmbedding: number[], options: SearchOptions = {}): Promise<SearchResult[]> {
     const topK = options.topK ?? 4
+    const threshold = options.threshold ?? 0.25
+
     const [vectorResults, keywordResults] = await Promise.all([
-      this.similaritySearch(queryEmbedding, { ...options, topK: topK * 2 }),
+      this.similaritySearch(queryEmbedding, { ...options, topK: topK * 2, threshold }),
       this.keywordSearch(query, { ...options, topK: topK * 2 }),
     ])
 
     // Merge and rank via Reciprocal Rank Fusion (RRF)
-    const scoreMap = new Map<string, { chunk: KnowledgeChunk; score: number }>()
+    const scoreMap = new Map<string, { chunk: KnowledgeChunk; score: number; rawSimilarity?: number }>()
 
     const k = 60
     vectorResults.forEach((res, rank) => {
       const rrf = 1 / (k + rank + 1)
-      scoreMap.set(res.chunk.id, { chunk: res.chunk, score: rrf * 0.7 })
+      scoreMap.set(res.chunk.id, {
+        chunk: res.chunk,
+        score: rrf * 0.7,
+        rawSimilarity: res.score,
+      })
     })
 
     keywordResults.forEach((res, rank) => {
@@ -115,11 +133,20 @@ export class MemoryVectorStore implements VectorStore {
       if (existing) {
         existing.score += rrf * 0.3
       } else {
-        scoreMap.set(res.chunk.id, { chunk: res.chunk, score: rrf * 0.3 })
+        scoreMap.set(res.chunk.id, {
+          chunk: res.chunk,
+          score: rrf * 0.3,
+        })
       }
     })
 
-    const combined = Array.from(scoreMap.values())
+    const combined = Array.from(scoreMap.values()).map((item) => ({
+      chunk: item.chunk,
+      score: item.score,
+      rawSimilarity: item.rawSimilarity,
+      matchType: 'hybrid' as const,
+    }))
+
     combined.sort((a, b) => b.score - a.score)
     return combined.slice(0, topK)
   }

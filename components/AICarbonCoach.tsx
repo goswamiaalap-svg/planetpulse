@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ActivityType, getTypeName } from '@/lib/co2'
+import { ActivityType, getTypeName, getUnitLabel } from '@/lib/co2'
 
 interface CoachResponse {
   answer: string
@@ -276,16 +276,21 @@ export default function AICarbonCoach() {
               </select>
             </div>
 
-            <div className="w-full md:w-28 flex-shrink-0 relative">
+            <div className="w-full md:w-32 flex-shrink-0 relative">
               <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider absolute -top-2 left-2 bg-[#0c120e] px-1">Amount</label>
-              <input
-                type="number"
-                value={simQty}
-                onChange={(e) => setSimQty(e.target.value)}
-                min="1"
-                className="w-full bg-transparent border border-white/10 rounded-lg text-sm py-2.5 px-3 font-mono text-gray-200 outline-none focus:border-emerald-500/50"
-                placeholder="Qty (km)"
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="number"
+                  value={simQty}
+                  onChange={(e) => setSimQty(e.target.value)}
+                  min="1"
+                  className="w-full bg-transparent border border-white/10 rounded-lg text-sm py-2.5 pl-3 pr-10 font-mono text-gray-200 outline-none focus:border-emerald-500/50"
+                  placeholder="Qty"
+                />
+                <span className="absolute right-3 text-xs font-mono text-gray-500 pointer-events-none">
+                  {getUnitLabel(simFrom)}
+                </span>
+              </div>
             </div>
 
             <button
