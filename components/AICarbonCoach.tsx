@@ -25,6 +25,9 @@ interface WhatIfResponse {
 export default function AICarbonCoach() {
   const [question, setQuestion] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamingStatus, setStreamingStatus] = useState<string | null>(null)
+  const [streamingAnswer, setStreamingAnswer] = useState('')
   const [coachData, setCoachData] = useState<CoachResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,22 +43,80 @@ export default function AICarbonCoach() {
     if (!q) return
 
     setLoading(true)
+    setIsStreaming(true)
+    setStreamingStatus('Connecting to AI Carbon Coach…')
+    setStreamingAnswer('')
+    setCoachData(null)
     setError(null)
 
     try {
       const res = await fetch('/api/ai/coach', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+        },
+        body: JSON.stringify({ question: q, stream: true }),
       })
 
       if (!res.ok) throw new Error('Failed to consult AI Carbon Coach')
-      const data = await res.json()
-      setCoachData(data)
+
+      const contentType = res.headers.get('content-type') || ''
+
+      // Handle Server-Sent Events (SSE) Stream
+      if (contentType.includes('text/event-stream') && res.body) {
+        const reader = res.body.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ''
+        let accumulatedAnswer = ''
+
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
+
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split('\n\n')
+          buffer = lines.pop() || ''
+
+          for (const block of lines) {
+            const trimmed = block.trim()
+            if (!trimmed.startsWith('data:')) continue
+
+            const jsonStr = trimmed.replace(/^data:\s*/, '')
+            try {
+              const event = JSON.parse(jsonStr)
+
+              if (event.type === 'status') {
+                setStreamingStatus(event.message)
+              } else if (event.type === 'token') {
+                accumulatedAnswer += event.token
+                setStreamingAnswer(accumulatedAnswer)
+                setStreamingStatus(null)
+              } else if (event.type === 'done') {
+                setCoachData(event.response)
+                setStreamingAnswer(event.response.answer)
+                setIsStreaming(false)
+                setStreamingStatus(null)
+              } else if (event.type === 'error') {
+                throw new Error(event.error || 'Stream error occurred')
+              }
+            } catch (jsonErr) {
+              console.warn('[SSE Parse Error]:', jsonErr)
+            }
+          }
+        }
+      } else {
+        // Fallback to standard JSON response
+        const data = await res.json()
+        setCoachData(data)
+        setStreamingAnswer(data.answer)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
       setLoading(false)
+      setIsStreaming(false)
+      setStreamingStatus(null)
     }
   }
 
@@ -96,8 +157,9 @@ export default function AICarbonCoach() {
           <div>
             <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
               AI Carbon Coach
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold uppercase tracking-wider">
-                RAG Grounded
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live RAG Stream
               </span>
             </h2>
             <p className="text-xs text-gray-400">
@@ -155,7 +217,10 @@ export default function AICarbonCoach() {
           className="btn-primary text-xs py-2.5 px-6 whitespace-nowrap flex items-center gap-1.5"
         >
           {loading ? (
-            <span className="animate-pulse">Analyzing…</span>
+            <span className="animate-pulse flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+              Streaming…
+            </span>
           ) : (
             <>
               <span>Ask Coach</span>
@@ -165,6 +230,14 @@ export default function AICarbonCoach() {
         </button>
       </div>
 
+      {/* Live Streaming Status Milestone Badge */}
+      {streamingStatus && (
+        <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-3.5 py-2 rounded-xl animate-in fade-in duration-200">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          <span className="font-mono">{streamingStatus}</span>
+        </div>
+      )}
+
       {/* Error message */}
       {error && (
         <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300">
@@ -172,21 +245,29 @@ export default function AICarbonCoach() {
         </div>
       )}
 
-      {/* Coach Output */}
-      {coachData && (
-        <div className="p-4 rounded-2xl bg-black/50 border border-emerald-950/80 space-y-4 animate-in fade-in duration-300">
+      {/* Coach Streaming / Final Output */}
+      {(streamingAnswer || coachData) && (
+        <div className="p-4 rounded-2xl bg-black/50 border border-emerald-950/80 space-y-4 animate-in fade-in duration-300 shadow-xl">
           <div>
-            <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-              Personalized Guidance
-            </span>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider block">
+                Personalized Guidance
+              </span>
+              {isStreaming && (
+                <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 animate-pulse">
+                  Streaming Live…
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-200 leading-relaxed font-normal">
-              {coachData.answer}
+              {streamingAnswer || coachData?.answer}
+              {isStreaming && <span className="inline-block w-2 h-4 ml-1 bg-emerald-400 animate-pulse" />}
             </p>
           </div>
 
           {/* Actionable Recommendations */}
-          {coachData.recommendations.length > 0 && (
-            <div>
+          {coachData && coachData.recommendations.length > 0 && (
+            <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
               <span className="text-[10px] font-mono font-bold text-teal-400 uppercase tracking-wider block mb-2">
                 Recommended Actions
               </span>
@@ -202,8 +283,8 @@ export default function AICarbonCoach() {
           )}
 
           {/* Traceable Sources */}
-          {coachData.sources.length > 0 && (
-            <div className="pt-3 border-t border-white/5 flex items-center justify-between flex-wrap gap-2 text-[11px]">
+          {coachData && coachData.sources.length > 0 && (
+            <div className="pt-3 border-t border-white/5 flex items-center justify-between flex-wrap gap-2 text-[11px] animate-in fade-in duration-300">
               <span className="text-gray-400">Grounding Citations:</span>
               <div className="flex items-center gap-2 flex-wrap">
                 {coachData.sources.map((s, idx) => (

@@ -15,7 +15,7 @@ function getSupabase() {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { question?: string }
+  let body: { question?: string; stream?: boolean }
   try {
     body = await req.json()
   } catch {
@@ -26,6 +26,8 @@ export async function POST(req: NextRequest) {
   if (!question) {
     return NextResponse.json({ error: 'Question is required' }, { status: 400 })
   }
+
+  const wantsStream = body.stream !== false || req.headers.get('accept')?.includes('text/event-stream')
 
   try {
     const supabase = getSupabase()
@@ -45,11 +47,44 @@ export async function POST(req: NextRequest) {
 
     // 2. Build non-PII User Context with previous week comparison
     const userContext = buildUserContext(activities, weeklyTarget, prevActivities)
-
-    // 3. Consult Carbon Coach Service
     const coachService = new CarbonCoachService()
-    const response = await coachService.consultCoach(question, userContext)
 
+    // 3. If streaming is requested, stream chunks via Server-Sent Events (SSE)
+    if (wantsStream) {
+      const encoder = new TextEncoder()
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            await coachService.consultCoachStream(question, userContext, (event) => {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`))
+            })
+            controller.close()
+          } catch (streamErr) {
+            console.error('[POST /api/ai/coach stream error]:', streamErr)
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: 'error',
+                  error: streamErr instanceof Error ? streamErr.message : 'Streaming failed',
+                })}\n\n`
+              )
+            )
+            controller.close()
+          }
+        },
+      })
+
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache, no-transform',
+          Connection: 'keep-alive',
+        },
+      })
+    }
+
+    // Non-streaming fallback
+    const response = await coachService.consultCoach(question, userContext)
     return NextResponse.json(response)
   } catch (err) {
     console.error('[POST /api/ai/coach] Error:', err)

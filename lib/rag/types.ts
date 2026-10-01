@@ -74,6 +74,12 @@ export interface CoachResponse {
   trace?: RagRequestTrace
 }
 
+export type CoachStreamEvent =
+  | { type: 'status'; stage: string; message: string }
+  | { type: 'token'; token: string }
+  | { type: 'done'; response: CoachResponse }
+  | { type: 'error'; error: string }
+
 export interface RagRequestTrace {
   requestId: string
   timestamp: string

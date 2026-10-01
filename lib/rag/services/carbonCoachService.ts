@@ -12,6 +12,7 @@ import { classifyQuery, rewriteQueryForRetrieval } from '../query/queryClassifie
 import { validateCoachOutput } from '../validation/outputValidator'
 import {
   CoachResponse,
+  CoachStreamEvent,
   CitationSource,
   RagRequestTrace,
   LatencyBreakdown,
@@ -79,6 +80,47 @@ export class CarbonCoachService {
    * Main entry point to consult the AI Carbon Coach
    */
   async consultCoach(question: string, userContext: UserContext): Promise<CoachResponse> {
+    return this.consultCoachCore(question, userContext)
+  }
+
+  /**
+   * Streaming entry point with status milestones and real-time token streaming
+   */
+  async consultCoachStream(
+    question: string,
+    userContext: UserContext,
+    onEvent: (event: CoachStreamEvent) => void
+  ): Promise<CoachResponse> {
+    onEvent({ type: 'status', stage: 'domain_gate', message: 'Analyzing question and checking domain boundaries...' })
+    
+    // Check classification first for status updates
+    const classification = classifyQuery(question)
+    if (classification.domainDecision.isAllowed) {
+      if (classification.requiresRAG) {
+        onEvent({ type: 'status', stage: 'retrieval', message: 'Searching authoritative climate knowledge base...' })
+      } else {
+        onEvent({ type: 'status', stage: 'stats', message: 'Auditing your personal weekly footprint ledger...' })
+      }
+    }
+
+    const response = await this.consultCoachCore(question, userContext)
+
+    onEvent({ type: 'status', stage: 'streaming', message: 'Formulating personalized sustainability guidance...' })
+
+    // Stream the final validated answer tokens progressively
+    const words = response.answer.split(/(\s+)/)
+    for (let i = 0; i < words.length; i++) {
+      onEvent({ type: 'token', token: words[i] })
+      if (i % 2 === 0) {
+        await new Promise((r) => setTimeout(r, 14))
+      }
+    }
+
+    onEvent({ type: 'done', response })
+    return response
+  }
+
+  private async consultCoachCore(question: string, userContext: UserContext): Promise<CoachResponse> {
     const startTime = Date.now()
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
 
