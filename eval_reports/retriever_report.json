@@ -1,59 +1,59 @@
 {
-  "timestamp": "2026-10-01T09:04:12.034Z",
+  "timestamp": "2026-10-01T09:40:28.773Z",
   "totalInDomainQueries": 50,
   "metricsByK": {
     "1": {
       "k": 1,
-      "hitRate": 0.84,
-      "precision": 0.84,
-      "recall": 0.286,
-      "mrr": 0.84,
+      "hitRate": 0.92,
+      "precision": 0.92,
+      "recall": 0.313,
+      "mrr": 0.92,
       "avgScore": 0.016
     },
     "3": {
       "k": 3,
-      "hitRate": 0.94,
-      "precision": 0.767,
-      "recall": 0.782,
-      "mrr": 0.883,
+      "hitRate": 0.96,
+      "precision": 0.847,
+      "recall": 0.864,
+      "mrr": 0.933,
       "avgScore": 0.016
     },
     "5": {
       "k": 5,
-      "hitRate": 0.96,
-      "precision": 0.688,
-      "recall": 1.17,
-      "mrr": 0.888,
+      "hitRate": 0.98,
+      "precision": 0.816,
+      "recall": 1.388,
+      "mrr": 0.938,
       "avgScore": 0.016
     },
     "8": {
       "k": 8,
-      "hitRate": 0.98,
-      "precision": 0.652,
-      "recall": 1.776,
-      "mrr": 0.891,
+      "hitRate": 1,
+      "precision": 0.762,
+      "recall": 2.075,
+      "mrr": 0.941,
       "avgScore": 0.016
     },
     "10": {
       "k": 10,
-      "hitRate": 0.98,
-      "precision": 0.64,
-      "recall": 2.177,
-      "mrr": 0.891,
+      "hitRate": 1,
+      "precision": 0.73,
+      "recall": 2.483,
+      "mrr": 0.941,
       "avgScore": 0.016
     }
   },
-  "bestK": 3,
+  "bestK": 5,
   "p50LatencyMs": 1,
   "p95LatencyMs": 2,
-  "avgLatencyMs": 1.2,
+  "avgLatencyMs": 1.5,
   "categoryPerformance": {
     "transportation": {
       "hitRate": 0.733,
       "avgTopScore": 0.016
     },
     "energy": {
-      "hitRate": 0.625,
+      "hitRate": 0.75,
       "avgTopScore": 0.016
     },
     "food": {
@@ -61,7 +61,7 @@
       "avgTopScore": 0.016
     },
     "general": {
-      "hitRate": 0.684,
+      "hitRate": 0.737,
       "avgTopScore": 0.015
     }
   }

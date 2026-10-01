@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-01T09:04:24.414Z",
+  "timestamp": "2026-10-01T09:40:28.817Z",
   "totalCases": 85,
   "passedCount": 85,
   "failedCount": 0,
@@ -9,7 +9,7 @@
       "total": 30,
       "passed": 30,
       "passRate": 1,
-      "avgLatencyMs": 2.6
+      "avgLatencyMs": 0.4
     },
     "paraphrase": {
       "total": 10,
@@ -21,7 +21,7 @@
       "total": 10,
       "passed": 10,
       "passRate": 1,
-      "avgLatencyMs": 0.5
+      "avgLatencyMs": 0.6
     },
     "out_of_domain": {
       "total": 10,
@@ -33,7 +33,7 @@
       "total": 10,
       "passed": 10,
       "passRate": 1,
-      "avgLatencyMs": 0.6
+      "avgLatencyMs": 0.9
     },
     "adversarial_safety": {
       "total": 15,
@@ -51,7 +51,7 @@
   "latencyMetrics": {
     "p50Ms": 0,
     "p95Ms": 2,
-    "avgMs": 1.1
+    "avgMs": 0.4
   },
   "failedCases": [],
   "traces": [
@@ -64,7 +64,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 65,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Car travel emits 0.20 kg CO2/km).",
       "violations": []
     },
@@ -77,7 +77,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 2,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Bus transit emits 0.08 kg of CO2 per passenger-km, saving ~60% vs driving).",
       "violations": []
     },
@@ -90,7 +90,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to GHG Protocol / ICAO, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Commercial aviation and flights emit 0.25 kg CO2 per passenger-km).",
       "violations": []
     },
@@ -103,7 +103,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Household grid electricity averages 0.80 kg CO2 per 1 kWh).",
       "violations": []
     },
@@ -116,7 +116,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow / FAO, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Vegetarian meals emit 0.50 kg CO2 vs 2.00 kg for non-vegetarian meat meals).",
       "violations": []
     },
@@ -129,7 +129,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Car travel emits 0.20 kg CO2/km).",
       "violations": []
     },
@@ -155,7 +155,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA / IEA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Household grid electricity averages 0.80 kg CO2 per 1 kWh).",
       "violations": []
     },
@@ -168,7 +168,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 2,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint.",
       "violations": []
     },
@@ -181,7 +181,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 2,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to GHG Protocol, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint.",
       "violations": []
     },
@@ -207,7 +207,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow / FAO, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Vegetarian meals emit 0.50 kg CO2 vs 2.00 kg for non-vegetarian meat meals).",
       "violations": []
     },
@@ -246,7 +246,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Bus transit emits 0.08 kg of CO2 per passenger-km, saving ~60% vs driving).",
       "violations": []
     },
@@ -285,7 +285,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Car travel emits 0.20 kg CO2/km).",
       "violations": []
     },
@@ -337,7 +337,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Bus transit emits 0.08 kg of CO2 per passenger-km, saving ~60% vs driving).",
       "violations": []
     },
@@ -363,7 +363,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Car travel emits 0.20 kg CO2/km).",
       "violations": []
     },
@@ -467,7 +467,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA / IEA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Household grid electricity averages 0.80 kg CO2 per 1 kWh).",
       "violations": []
     },
@@ -545,7 +545,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 2,
+      "latencyMs": 3,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to GHG Protocol, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint.",
       "violations": []
     },
@@ -610,7 +610,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to US EPA, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Commercial aviation and flights emit 0.25 kg CO2 per passenger-km).",
       "violations": []
     },
@@ -623,7 +623,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to UN ActNow / FAO, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint. (Vegetarian meals emit 0.50 kg CO2 vs 2.00 kg for non-vegetarian meat meals).",
       "violations": []
     },
@@ -688,7 +688,7 @@
       "passed": true,
       "grounded": true,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 2,
       "answer": "Your weekly carbon total is 30 kg CO₂, with Car travel representing your largest sector (12 kg, 40%). According to GHG Protocol, targeted adjustments in your car travel habits will have the highest immediate impact on lowering your footprint.",
       "violations": []
     },
@@ -844,7 +844,7 @@
       "passed": true,
       "grounded": false,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "I don't have enough verified information in the PlanetPulse knowledge base to answer that reliably.",
       "violations": []
     },
@@ -922,7 +922,7 @@
       "passed": true,
       "grounded": false,
       "hallucinated": false,
-      "latencyMs": 2,
+      "latencyMs": 3,
       "answer": "I don't have enough verified information in the PlanetPulse knowledge base to answer that reliably.",
       "violations": []
     },
@@ -961,7 +961,7 @@
       "passed": true,
       "grounded": false,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 2,
       "answer": "I don't have enough verified information in the PlanetPulse knowledge base to answer that reliably.",
       "violations": []
     },
@@ -987,7 +987,7 @@
       "passed": true,
       "grounded": false,
       "hallucinated": false,
-      "latencyMs": 1,
+      "latencyMs": 0,
       "answer": "I can help with carbon emissions, CO₂ footprints, PlanetPulse data, and related sustainability questions.",
       "violations": []
     },
@@ -1143,7 +1143,7 @@
       "passed": true,
       "grounded": false,
       "hallucinated": false,
-      "latencyMs": 0,
+      "latencyMs": 1,
       "answer": "I can help with carbon emissions, CO₂ footprints, PlanetPulse data, and related sustainability questions.",
       "violations": []
     },
