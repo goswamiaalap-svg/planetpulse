@@ -15,21 +15,21 @@ export default function Navbar() {
 
   return (
     <header className="relative z-50 w-full">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 py-5 flex items-center justify-between">
-        {/* Left — Wordmark */}
+      <div className="max-w-[1280px] mx-auto px-8 py-6 flex items-center justify-between">
+        {/* Left — Wordmark in Instrument Serif */}
         <Link
           href="/"
-          className="flex items-center gap-2 group"
+          className="flex items-center group"
           aria-label="PlanetPulse Home"
         >
-          <span className="text-lg">🌱</span>
-          <span className="font-display text-[26px] sm:text-[30px] text-white tracking-tight leading-none">
+          <span className="font-display text-[30px] text-white tracking-tight leading-none">
             PlanetPulse
+            <sup className="text-[10px] font-sans font-normal text-white/50 ml-0.5 align-super">®</sup>
           </span>
         </Link>
 
-        {/* Center — Navigation (hidden on mobile) */}
-        <nav className="hidden md:flex items-center gap-8 lg:gap-10">
+        {/* Center — Navigation links (hidden on mobile) */}
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -40,8 +40,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`text-[14px] font-medium tracking-wide transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? 'text-[#5EEAD4] opacity-100'
-                    : 'text-slate-400 hover:text-white opacity-80 hover:opacity-100'
+                    ? 'text-white opacity-100'
+                    : 'text-white/60 hover:text-white hover:opacity-100'
                 }`}
               >
                 {link.label}
@@ -50,20 +50,19 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right — CTA Pill */}
+        {/* Right — Pill CTA */}
         <Link
           href="/log"
-          className="btn-pill py-2.5 px-6 text-[14px] font-medium hidden sm:inline-flex items-center gap-2"
+          className="btn-pill py-2.5 px-6 text-[14px] font-medium hidden sm:inline-flex"
         >
           Start Tracking
         </Link>
 
-        {/* Mobile menu button */}
+        {/* Mobile menu toggle */}
         <button
-          className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
+          className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
           aria-label="Menu"
           onClick={() => {
-            // Simple mobile menu toggle - scroll to show nav links
             const nav = document.getElementById('mobile-nav')
             if (nav) nav.classList.toggle('hidden')
           }}
@@ -77,7 +76,7 @@ export default function Navbar() {
       {/* Mobile Nav Dropdown */}
       <nav
         id="mobile-nav"
-        className="hidden md:hidden px-6 pb-4 space-y-1"
+        className="hidden md:hidden px-8 pb-4 space-y-1"
       >
         {navLinks.map((link) => {
           const isActive = pathname === link.href
@@ -87,8 +86,8 @@ export default function Navbar() {
               href={link.href}
               className={`block py-2.5 px-4 rounded-xl text-[14px] font-medium transition-all ${
                 isActive
-                  ? 'text-[#5EEAD4] bg-white/5'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'text-white bg-white/10'
+                  : 'text-white/60 hover:text-white hover:bg-white/5'
               }`}
             >
               {link.label}

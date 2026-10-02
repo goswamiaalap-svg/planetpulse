@@ -31,10 +31,16 @@
     @apply bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 px-5 rounded-full border border-white/15 transition-all backdrop-blur-md;
   }
   .btn-pill {
-    @apply bg-black text-white hover:bg-[#5EEAD4] hover:text-black border border-white/20 hover:border-[#5EEAD4] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] rounded-full;
+    @apply bg-black text-white rounded-full transition-all duration-200 ease-in-out hover:scale-[1.03] active:scale-[0.98];
+  }
+  .btn-pill-sm {
+    @apply btn-pill py-2.5 px-6 text-[14px] font-medium;
+  }
+  .btn-pill-hero {
+    @apply btn-pill py-5 px-14 text-[16px] font-medium shadow-xl;
   }
   .input {
-    @apply w-full border border-white/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#5EEAD4]/50 focus:border-transparent transition-all bg-black/50 text-white placeholder-gray-400;
+    @apply w-full border border-white/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all bg-black/50 text-white placeholder-gray-400;
   }
   .label {
     @apply block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5;

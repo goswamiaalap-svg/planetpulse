@@ -26,9 +26,9 @@ export default function Sidebar() {
       {/* Toggle Button & Logo */}
       <div className={`flex items-center mb-10 mt-2 ${isOpen ? 'justify-between' : 'justify-center'}`}>
         {isOpen && (
-          <Link href="/" className="flex items-center gap-3 group overflow-hidden pl-2">
-            <span className="font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-white text-lg whitespace-nowrap group-hover:scale-105 transition-transform origin-left">
-              PlanetPulse
+          <Link href="/" className="flex items-center group overflow-hidden pl-2">
+            <span className="font-display text-xl text-white whitespace-nowrap group-hover:scale-105 transition-transform origin-left tracking-tight">
+              PlanetPulse<sup className="text-[8px] font-sans font-normal text-white/40 ml-0.5">®</sup>
             </span>
           </Link>
         )}

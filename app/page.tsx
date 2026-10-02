@@ -129,79 +129,65 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Editorial Cinematic Hero */}
-      <section className="flex flex-col items-center justify-center text-center pt-10 sm:pt-16 pb-10 max-w-4xl mx-auto">
-        {/* H1 — Instrument Serif editorial headline */}
-        <h1
-          className="font-display text-[48px] sm:text-[64px] md:text-[80px] font-normal text-white leading-[0.95] tracking-[-2.46px] opacity-0 animate-fade-rise"
-        >
-          See the{' '}
-          <em className="text-[#5EEAD4] not-italic">real cost</em>
-          <br className="hidden sm:block" />
-          {' '}of your day.
-        </h1>
-
-        {/* Sub-header */}
-        <p
-          className="max-w-[670px] text-base sm:text-[18px] leading-[1.625] text-slate-300 mt-6 sm:mt-8 opacity-0 animate-fade-rise animation-delay-200"
-        >
-          PlanetPulse turns everyday choices — travel, food, energy — into a
-          real-time carbon footprint, with AI-powered guidance that helps you
-          actually improve it.
-        </p>
-
-        {/* CTA buttons */}
-        <div className="flex items-center gap-4 mt-8 sm:mt-10 flex-wrap justify-center opacity-0 animate-fade-rise animation-delay-400">
-          <Link
-            href="/log"
-            className="btn-pill py-5 px-14 text-[16px] font-medium shadow-xl flex items-center gap-2"
+      {/* 1. Editorial Cinematic Hero — Full-bleed with own video layer */}
+      <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 min-h-screen relative overflow-hidden flex flex-col items-center justify-center">
+        {/* Hero Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
           >
-            Log Your First Activity
-          </Link>
-          <Link
-            href="#ai-coach"
-            className="btn-secondary py-4 px-8 text-[15px] font-medium flex items-center gap-2"
-          >
-            <Bot className="w-5 h-5" />
-            Ask AI Coach
-          </Link>
+            <source
+              src="https://designerstephen.github.io/public-assets/videos/serene-art-hero.mp4"
+              type="video/mp4"
+            />
+          </video>
+          {/* Subtle dark overlay for text legibility */}
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        {/* Thin category-breakdown strip — appears only when data exists */}
-        {totalCO2 > 0 && breakdown.length > 0 && (
-          <div className="w-full max-w-xl mx-auto mt-10 opacity-0 animate-fade-rise animation-delay-450">
-            <div className="h-1.5 w-full rounded-full overflow-hidden flex bg-white/10 border border-white/10">
-              {breakdown.map((b) => {
-                const sharePct = (b.co2_kg / totalCO2) * 100
-                return (
-                  <div
-                    key={b.type}
-                    style={{
-                      width: `${sharePct}%`,
-                      backgroundColor: CATEGORY_COLORS[b.type],
-                    }}
-                    title={`${getTypeName(b.type)}: ${b.co2_kg.toFixed(1)} kg (${sharePct.toFixed(1)}%)`}
-                    className="h-full transition-all duration-500"
-                  />
-                )
-              })}
-            </div>
-            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 mt-2.5 text-[11px] text-slate-400">
-              {breakdown.map((b) => (
-                <span key={b.type} className="inline-flex items-center gap-1.5">
-                  <span
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: CATEGORY_COLORS[b.type] }}
-                  />
-                  <span>{getTypeName(b.type)}</span>
-                  <span className="text-slate-500 font-mono text-[10px]">
-                    {((b.co2_kg / totalCO2) * 100).toFixed(0)}%
-                  </span>
-                </span>
-              ))}
-            </div>
+        {/* Hero Content — Navy text, centered */}
+        <div className="relative z-10 text-center px-6 sm:px-8 max-w-[1280px] mx-auto w-full flex flex-col items-center justify-center py-24">
+          {/* H1 — Instrument Serif editorial headline */}
+          <h1
+            className="font-display text-[48px] sm:text-[64px] md:text-[80px] font-normal text-[#0f172a] leading-[0.95] tracking-[-2.46px] opacity-0 animate-fade-rise"
+          >
+            See the{' '}
+            <em className="not-italic">real cost</em>
+            <br className="hidden sm:block" />
+            {' '}of your day.
+          </h1>
+
+          {/* Sub-header */}
+          <p
+            className="max-w-[670px] text-base sm:text-[18px] leading-[1.625] mt-6 sm:mt-8 opacity-0 animate-fade-rise animation-delay-200"
+            style={{ color: 'hsl(215, 25%, 32%)' }}
+          >
+            PlanetPulse turns everyday choices — travel, food, energy — into a
+            real-time carbon footprint, with AI-powered guidance that helps you
+            actually improve it.
+          </p>
+
+          {/* CTA buttons */}
+          <div className="flex items-center gap-4 mt-10 sm:mt-12 flex-wrap justify-center opacity-0 animate-fade-rise animation-delay-400">
+            <Link
+              href="/log"
+              className="btn-pill py-5 px-14 text-[16px] font-medium shadow-xl"
+            >
+              Log Your First Activity
+            </Link>
+            <Link
+              href="#ai-coach"
+              className="py-4 px-8 text-[15px] font-medium rounded-full border border-[#0f172a]/20 text-[#0f172a] hover:bg-[#0f172a]/5 transition-all duration-200 flex items-center gap-2"
+            >
+              <Bot className="w-5 h-5" />
+              Ask AI Coach
+            </Link>
           </div>
-        )}
+        </div>
       </section>
 
       {/* 2. Stats Row: 5 compact balanced cards with subtle gradient backdrop */}
