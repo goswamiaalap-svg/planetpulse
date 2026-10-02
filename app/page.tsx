@@ -129,53 +129,48 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Cinematic Hero Section with improved vertical spacing */}
-      <section className="text-center pt-8 pb-6 max-w-3xl mx-auto flex flex-col items-center">
-        {/* Trust pill row */}
-        <div className="inline-flex items-center gap-2 bg-[#28282a]/80 backdrop-blur-md border border-white/20 rounded-full py-1 px-3.5 mb-3 shadow-lg">
-          <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-[10px] font-bold">
-            🌱
-          </span>
-          <span className="text-[11px] font-medium tracking-wide text-gray-200">
-            Real-Time Carbon Footprint Intelligence • Climate Tech
-          </span>
-        </div>
-
-        {/* Big Bold Headline with compact margins */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-none mb-2.5 drop-shadow-md">
-          PLANETPULSE
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-white to-teal-200">
-            CARBON AI TRACKER
-          </span>
+      {/* 1. Editorial Cinematic Hero */}
+      <section className="flex flex-col items-center justify-center text-center pt-10 sm:pt-16 pb-10 max-w-4xl mx-auto">
+        {/* H1 — Instrument Serif editorial headline */}
+        <h1
+          className="font-display text-[48px] sm:text-[64px] md:text-[80px] font-normal text-white leading-[0.95] tracking-[-2.46px] opacity-0 animate-fade-rise"
+        >
+          See the{' '}
+          <em className="text-[#5EEAD4] not-italic">real cost</em>
+          <br className="hidden sm:block" />
+          {' '}of your day.
         </h1>
 
-        <p className="text-gray-300 text-xs sm:text-sm max-w-lg leading-relaxed mb-4 font-normal">
-          Automated weekly CO₂ footprint tracking for daily mobility, diet, and energy. Real-time AI sustainability insights &amp; statutory audit.
+        {/* Sub-header */}
+        <p
+          className="max-w-[670px] text-base sm:text-[18px] leading-[1.625] text-slate-300 mt-6 sm:mt-8 opacity-0 animate-fade-rise animation-delay-200"
+        >
+          PlanetPulse turns everyday choices — travel, food, energy — into a
+          real-time carbon footprint, with AI-powered guidance that helps you
+          actually improve it.
         </p>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-4 mb-4 flex-wrap justify-center">
+        {/* CTA buttons */}
+        <div className="flex items-center gap-4 mt-8 sm:mt-10 flex-wrap justify-center opacity-0 animate-fade-rise animation-delay-400">
           <Link
             href="/log"
-            className="bg-white hover:bg-gray-100 text-gray-950 font-bold px-7 py-2.5 rounded-full text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+            className="btn-pill py-5 px-14 text-[16px] font-medium shadow-xl flex items-center gap-2"
           >
-            <span>Inspect &amp; Log Activity</span>
-            <span className="text-base">→</span>
+            Log Your First Activity
           </Link>
-          
           <Link
             href="#ai-coach"
-            className="bg-[#0c1015]/80 hover:bg-[#1a232b] text-emerald-400 font-bold px-6 py-2.5 rounded-full text-sm border border-emerald-500/30 shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 backdrop-blur-md"
+            className="btn-secondary py-4 px-8 text-[15px] font-medium flex items-center gap-2"
           >
             <Bot className="w-5 h-5" />
-            <span>Ask AI Coach</span>
+            Ask AI Coach
           </Link>
         </div>
 
-        {/* Layout improvement 2: Thin horizontal category-breakdown strip */}
+        {/* Thin category-breakdown strip — appears only when data exists */}
         {totalCO2 > 0 && breakdown.length > 0 && (
-          <div className="w-full max-w-xl mx-auto mt-1 mb-2">
-            <div className="h-2 w-full rounded-full overflow-hidden flex bg-white/10 border border-white/15 shadow-inner">
+          <div className="w-full max-w-xl mx-auto mt-10 opacity-0 animate-fade-rise animation-delay-450">
+            <div className="h-1.5 w-full rounded-full overflow-hidden flex bg-white/10 border border-white/10">
               {breakdown.map((b) => {
                 const sharePct = (b.co2_kg / totalCO2) * 100
                 return (
@@ -186,13 +181,12 @@ export default function DashboardPage() {
                       backgroundColor: CATEGORY_COLORS[b.type],
                     }}
                     title={`${getTypeName(b.type)}: ${b.co2_kg.toFixed(1)} kg (${sharePct.toFixed(1)}%)`}
-                    className="h-full transition-all duration-500 hover:opacity-90"
+                    className="h-full transition-all duration-500"
                   />
                 )
               })}
             </div>
-            {/* Category micro-legend matching dark theme accents */}
-            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-gray-300">
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 mt-2.5 text-[11px] text-slate-400">
               {breakdown.map((b) => (
                 <span key={b.type} className="inline-flex items-center gap-1.5">
                   <span
@@ -200,7 +194,7 @@ export default function DashboardPage() {
                     style={{ backgroundColor: CATEGORY_COLORS[b.type] }}
                   />
                   <span>{getTypeName(b.type)}</span>
-                  <span className="text-gray-400 font-mono text-[10px]">
+                  <span className="text-slate-500 font-mono text-[10px]">
                     {((b.co2_kg / totalCO2) * 100).toFixed(0)}%
                   </span>
                 </span>

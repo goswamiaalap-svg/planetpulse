@@ -1,10 +1,21 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const instrumentSerif = Instrument_Serif({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'PlanetPulse — Track Your Carbon Footprint',
@@ -17,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} min-h-screen text-white relative overflow-x-hidden`}>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className={`${inter.className} font-sans min-h-screen text-white relative overflow-x-hidden bg-[#050706]`}>
         {/* Full-viewport Cinematic Background Video matching PramaanCheck */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
           <video

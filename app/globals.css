@@ -20,7 +20,7 @@
 }
 
 @layer components {
-  /* Glassmorphic card styling matching PramaanCheck aesthetic */
+  /* Glassmorphic card styling */
   .card {
     @apply bg-black/45 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6 text-white;
   }
@@ -30,10 +30,29 @@
   .btn-secondary {
     @apply bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 px-5 rounded-full border border-white/15 transition-all backdrop-blur-md;
   }
+  .btn-pill {
+    @apply bg-black text-white hover:bg-[#5EEAD4] hover:text-black border border-white/20 hover:border-[#5EEAD4] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] rounded-full;
+  }
   .input {
-    @apply w-full border border-white/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all bg-black/50 text-white placeholder-gray-400;
+    @apply w-full border border-white/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#5EEAD4]/50 focus:border-transparent transition-all bg-black/50 text-white placeholder-gray-400;
   }
   .label {
     @apply block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5;
   }
+}
+
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+.animation-delay-450 {
+  animation-delay: 450ms;
 }
