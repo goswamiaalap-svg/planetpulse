@@ -17,8 +17,10 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "cheerio": "^1.2.0",
+    "dotenv": "^18.0.5",
     "lucide-react": "^1.46.0",
     "next": "14.2.15",
+    "puppeteer": "^25.12.0",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.12.7"

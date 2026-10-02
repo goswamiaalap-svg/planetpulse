@@ -60,7 +60,7 @@ export default function ActivityForm({ onSuccess }: Props) {
       const res = await fetch('/api/activities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, quantity: quantityNum, co2_kg, date, confirmed: true }),
+        body: JSON.stringify({ type, quantity: quantityNum, co2_kg, date, confirmed }),
       })
 
       if (!res.ok) {

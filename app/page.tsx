@@ -192,9 +192,9 @@ export default function DashboardPage() {
       </section>
 
       {/* Dashboard Content — sidebar-aware padding, full-bleed background inherited from layout */}
-      <div className="w-full px-4 sm:px-6 lg:pl-24 lg:pr-8 py-8 space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:pl-28 lg:pr-8 py-8 space-y-6">
         {/* 2. Stats Row: 5 compact balanced cards */}
-        <div className="relative max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
+        <div className="relative w-full rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-2">
             {/* Stat 1: Total CO2 */}
             <div className="card text-center py-4 px-3 border-white/10 hover:border-emerald-500/40 transition-all bg-black/40">
@@ -258,7 +258,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 3. Horizontal Grid: Target Progress (Left) + AI Nudge (Right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
           {/* Left Column: Weekly Target */}
           <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
 
@@ -284,7 +284,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 4. Horizontal Grid: Category Breakdown (Left) + Activities & Target Controls (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full items-start">
           {/* Left 2 Cols: Category Chart & Table */}
           <div className="card lg:col-span-2">
             <h2 className="text-base font-bold text-white uppercase tracking-wider mb-4 flex items-center justify-between">
@@ -375,7 +375,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 5. AI Carbon Coach (RAG Knowledge Base & Simulation) */}
-        <div id="ai-coach" className="max-w-5xl mx-auto scroll-mt-12 group">
+        <div id="ai-coach" className="w-full scroll-mt-12 group">
           <div className="relative rounded-3xl p-1 transition-all duration-700 bg-gradient-to-r hover:from-emerald-500/30 hover:via-teal-500/20 hover:to-transparent from-emerald-500/10 via-transparent to-transparent shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.3)]">
             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-[2rem] blur opacity-10 group-hover:opacity-30 transition duration-1000 group-hover:duration-200" />
             <div className="relative rounded-2xl bg-black/40 ring-1 ring-white/10 backdrop-blur-sm">

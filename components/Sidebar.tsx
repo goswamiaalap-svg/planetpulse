@@ -19,7 +19,7 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`hidden lg:flex flex-col h-screen fixed top-0 left-0 bg-[#0c1015]/95 backdrop-blur-xl border-r border-white/10 p-4 z-[60] transition-all duration-300 ${
+      className={`hidden lg:flex flex-col h-screen fixed top-0 left-0 bg-[#090d16]/40 backdrop-blur-2xl border-r border-white/15 p-4 z-[60] transition-all duration-300 shadow-[10px_0_30px_rgba(0,0,0,0.2)] ${
         isOpen ? 'w-64' : 'w-20'
       }`}
     >
@@ -34,7 +34,7 @@ export default function Sidebar() {
         )}
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex-shrink-0"
+          className="p-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all flex-shrink-0"
           aria-label="Toggle Sidebar"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-6 h-6" />}
@@ -55,8 +55,8 @@ export default function Sidebar() {
                 isOpen ? 'px-4' : 'justify-center px-0'
               } ${
                 isActive && !link.href.includes('#')
-                  ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-bold shadow-[0_0_15px_rgba(16,185,129,0.05)]'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-bold shadow-[0_0_20px_rgba(16,185,129,0.2)] backdrop-blur-md'
+                  : 'text-gray-300 hover:bg-white/10 hover:text-white border border-transparent'
               }`}
             >
               <link.icon className={`w-5 h-5 flex-shrink-0 ${isActive && !link.href.includes('#') ? 'text-emerald-400' : ''}`} />
@@ -71,7 +71,7 @@ export default function Sidebar() {
         <Link
           href="/log"
           title={!isOpen ? "New Entry" : undefined}
-          className={`w-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 rounded-xl py-3 flex items-center gap-2 transition-all hover:-translate-y-1 font-bold text-sm whitespace-nowrap ${
+          className={`w-full bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-300 rounded-xl py-3 flex items-center gap-2 transition-all hover:-translate-y-0.5 font-bold text-sm whitespace-nowrap backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.15)] ${
             isOpen ? 'justify-center px-4' : 'justify-center px-0'
           }`}
         >
