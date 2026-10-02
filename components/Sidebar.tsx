@@ -19,7 +19,7 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`hidden lg:flex flex-col h-screen sticky top-0 bg-[#0c1015]/95 backdrop-blur-xl border-r border-white/10 p-4 flex-shrink-0 z-50 transition-all duration-300 ${
+      className={`hidden lg:flex flex-col h-screen fixed top-0 left-0 bg-[#0c1015]/95 backdrop-blur-xl border-r border-white/10 p-4 z-[60] transition-all duration-300 ${
         isOpen ? 'w-64' : 'w-20'
       }`}
     >

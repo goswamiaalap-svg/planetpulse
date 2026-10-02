@@ -128,29 +128,30 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* 1. Editorial Cinematic Hero — Full-bleed with own video layer */}
-      <section className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-8 min-h-screen relative overflow-hidden flex flex-col items-center justify-center">
-        {/* Hero Video Background */}
-        <div className="absolute inset-0 z-0">
+    <>
+      {/* 1. Editorial Cinematic Hero — True full-viewport, independent of sidebar */}
+      <section className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
+        {/* Hero Video Background — absolute, covers full viewport */}
+        <div className="absolute inset-0 z-0" style={{ backgroundColor: 'hsl(201, 100%, 13%)' }}>
           <video
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback: hide broken video, CSS background-color shows through
+              (e.target as HTMLVideoElement).style.display = 'none'
+            }}
           >
-            <source
-              src="https://designerstephen.github.io/public-assets/videos/serene-art-hero.mp4"
-              type="video/mp4"
-            />
+            <source src="/hero-video.mp4" type="video/mp4" />
           </video>
-          {/* Subtle dark overlay for text legibility */}
+          {/* Subtle dark overlay for text legibility against bright video */}
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
-        {/* Hero Content — Navy text, centered */}
-        <div className="relative z-10 text-center px-6 sm:px-8 max-w-[1280px] mx-auto w-full flex flex-col items-center justify-center py-24">
+        {/* Hero Content — Navy text, centered, with left padding for sidebar clearance */}
+        <div className="relative z-10 text-center px-6 sm:px-8 lg:pl-28 max-w-[1280px] mx-auto w-full flex flex-col items-center justify-center py-24">
           {/* H1 — Instrument Serif editorial headline */}
           <h1
             className="font-display text-[48px] sm:text-[64px] md:text-[80px] font-normal text-[#0f172a] leading-[0.95] tracking-[-2.46px] opacity-0 animate-fade-rise"
@@ -190,196 +191,200 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* 2. Stats Row: 5 compact balanced cards with subtle gradient backdrop */}
-      <div className="relative max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-2">
-          {/* Stat 1: Total CO2 */}
-          <div className="card text-center py-4 px-3 border-white/10 hover:border-emerald-500/40 transition-all bg-black/40">
-            <div className="text-[11px] font-mono font-bold text-emerald-400 mb-1">&lt; kg CO₂</div>
-            <div
-              className="text-2xl sm:text-3xl font-black text-white font-mono"
-              data-testid="total-co2"
-              aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
-            >
-              {totalCO2.toFixed(1)}
-            </div>
-            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-              This Week Total
-            </div>
-          </div>
-
-          {/* Stat 2: Target Limit */}
-          <div className="card text-center py-4 px-3 border-white/10 hover:border-amber-500/40 transition-all bg-black/40">
-            <div className="text-[11px] font-mono font-bold text-amber-400 mb-1">% TARGET</div>
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-              {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
-            </div>
-            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-              Target Pace
-            </div>
-          </div>
-
-          {/* Stat 3: Week Day Progress */}
-          <div className="card text-center py-4 px-3 border-white/10 hover:border-teal-500/40 transition-all bg-black/40">
-            <div className="text-[11px] font-mono font-bold text-teal-400 mb-1">* WEEK</div>
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-              {weekProgress.dayOfWeek}/7
-            </div>
-            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-              Days Elapsed
-            </div>
-          </div>
-
-          {/* Stat 4: Activities count */}
-          <div className="card text-center py-4 px-3 border-white/10 hover:border-purple-500/40 transition-all bg-black/40">
-            <div className="text-[11px] font-mono font-bold text-purple-400 mb-1"># ENTRIES</div>
-            <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-              {activities.length}
-            </div>
-            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-              Logged Events
-            </div>
-          </div>
-
-          {/* Stat 5: Top Category this week (Balances row on wider viewports) */}
-          <div className="card text-center py-4 px-3 border-white/10 hover:border-rose-500/40 transition-all bg-black/40 col-span-2 sm:col-span-1">
-            <div className="text-[11px] font-mono font-bold text-rose-400 mb-1">TOP SECTOR</div>
-            <div className="text-lg sm:text-xl font-bold text-white truncate px-1 mt-1 font-mono">
-              {topCategory ? getTypeName(topCategory.type) : 'None'}
-            </div>
-            <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-              {topCategory ? `${topCategory.co2_kg.toFixed(1)} kg` : 'Primary driver'}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Horizontal Grid: Target Progress (Left) + AI Nudge (Right) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto items-stretch">
-        {/* Left Column: Weekly Target */}
-        <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
-
-        {/* Right Column: AI Nudge */}
-        <div className="flex flex-col justify-center">
-          {isOver ? (
-            <NudgePanel
-              total={totalCO2}
-              target={target!}
-              breakdown={breakdown}
-              isOver={isOver}
-            />
-          ) : (
-            <div className="card h-full flex flex-col justify-center items-center text-center p-6 border-white/10">
-              <span className="text-3xl mb-2">🌿</span>
-              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Within Target Limit</h3>
-              <p className="text-xs text-gray-300 leading-relaxed max-w-sm">
-                You are on track with your weekly carbon target. Keep choosing green transit and plant-forward meals!
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 4. Horizontal Grid: Category Breakdown (Left) + Activities & Target Controls (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
-        {/* Left 2 Cols: Category Chart & Table */}
-        <div className="card lg:col-span-2">
-          <h2 className="text-base font-bold text-white uppercase tracking-wider mb-4 flex items-center justify-between">
-            <span>Emissions By Category</span>
-            <span className="text-xs font-mono text-gray-400 font-normal">6 Factors Audit</span>
-          </h2>
-          {activities.length === 0 ? (
-            <div className="text-center py-12 text-gray-400" data-testid="empty-state">
-              <span className="text-4xl mb-3 block">🌍</span>
-              <p className="font-medium">No activities logged yet this week</p>
-              <p className="text-sm mt-1">
-                <Link href="/log" className="text-emerald-400 underline">Log your first activity</Link>
-              </p>
-            </div>
-          ) : (
-            <CO2Chart data={breakdown} />
-          )}
-        </div>
-
-        {/* Right 1 Col: Set Target & Recent Activities */}
-        <div className="space-y-6">
-          {/* Target Update Form */}
-          <div className="card" id="set-target">
-            <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1.5">
-              {target ? 'Update Target Goal' : 'Configure Weekly Target'}
-            </h3>
-            <p className="text-xs text-gray-300 mb-3 leading-relaxed">
-              Define your weekly CO₂ threshold in kg.
-            </p>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <input
-                  type="number"
-                  className="input pr-10 font-mono text-sm py-2"
-                  placeholder={target ? String(target) : 'e.g. 30'}
-                  min="0.1"
-                  step="0.5"
-                  value={targetForm.value}
-                  onChange={(e) => setTargetForm((f) => ({ ...f, value: e.target.value }))}
-                  aria-label="Weekly CO2 target in kg"
-                  data-testid="target-input"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold font-mono">kg</span>
-              </div>
-              <button
-                onClick={handleSaveTarget}
-                disabled={targetForm.saving || !targetForm.value}
-                className="btn-primary text-xs py-2 px-4 whitespace-nowrap"
-                data-testid="save-target-button"
+      {/* Dashboard Content — sidebar-aware padding, full-bleed background inherited from layout */}
+      <div className="w-full px-4 sm:px-6 lg:pl-24 lg:pr-8 py-8 space-y-6">
+        {/* 2. Stats Row: 5 compact balanced cards */}
+        <div className="relative max-w-5xl mx-auto rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-2">
+            {/* Stat 1: Total CO2 */}
+            <div className="card text-center py-4 px-3 border-white/10 hover:border-emerald-500/40 transition-all bg-black/40">
+              <div className="text-[11px] font-mono font-bold text-emerald-400 mb-1">&lt; kg CO₂</div>
+              <div
+                className="text-2xl sm:text-3xl font-black text-white font-mono"
+                data-testid="total-co2"
+                aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
               >
-                {targetForm.saving ? 'Saving…' : targetForm.saved ? '✓ Set' : 'Save'}
-              </button>
+                {totalCO2.toFixed(1)}
+              </div>
+              <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                This Week Total
+              </div>
+            </div>
+
+            {/* Stat 2: Target Limit */}
+            <div className="card text-center py-4 px-3 border-white/10 hover:border-amber-500/40 transition-all bg-black/40">
+              <div className="text-[11px] font-mono font-bold text-amber-400 mb-1">% TARGET</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
+              </div>
+              <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                Target Pace
+              </div>
+            </div>
+
+            {/* Stat 3: Week Day Progress */}
+            <div className="card text-center py-4 px-3 border-white/10 hover:border-teal-500/40 transition-all bg-black/40">
+              <div className="text-[11px] font-mono font-bold text-teal-400 mb-1">* WEEK</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {weekProgress.dayOfWeek}/7
+              </div>
+              <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                Days Elapsed
+              </div>
+            </div>
+
+            {/* Stat 4: Activities count */}
+            <div className="card text-center py-4 px-3 border-white/10 hover:border-purple-500/40 transition-all bg-black/40">
+              <div className="text-[11px] font-mono font-bold text-purple-400 mb-1"># ENTRIES</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {activities.length}
+              </div>
+              <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                Logged Events
+              </div>
+            </div>
+
+            {/* Stat 5: Top Category */}
+            <div className="card text-center py-4 px-3 border-white/10 hover:border-rose-500/40 transition-all bg-black/40 col-span-2 sm:col-span-1">
+              <div className="text-[11px] font-mono font-bold text-rose-400 mb-1">TOP SECTOR</div>
+              <div className="text-lg sm:text-xl font-bold text-white truncate px-1 mt-1 font-mono">
+                {topCategory ? getTypeName(topCategory.type) : 'None'}
+              </div>
+              <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                {topCategory ? `${topCategory.co2_kg.toFixed(1)} kg` : 'Primary driver'}
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Recent Activities List */}
-          {activities.length > 0 && (
-            <div className="card">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Recent Logs</h3>
-                <Link href="/history" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold hover:underline">
-                  All ({activities.length}) →
-                </Link>
+        {/* 3. Horizontal Grid: Target Progress (Left) + AI Nudge (Right) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto items-stretch">
+          {/* Left Column: Weekly Target */}
+          <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
+
+          {/* Right Column: AI Nudge */}
+          <div className="flex flex-col justify-center">
+            {isOver ? (
+              <NudgePanel
+                total={totalCO2}
+                target={target!}
+                breakdown={breakdown}
+                isOver={isOver}
+              />
+            ) : (
+              <div className="card h-full flex flex-col justify-center items-center text-center p-6 border-white/10">
+                <span className="text-3xl mb-2">🌿</span>
+                <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Within Target Limit</h3>
+                <p className="text-xs text-gray-300 leading-relaxed max-w-sm">
+                  You are on track with your weekly carbon target. Keep choosing green transit and plant-forward meals!
+                </p>
               </div>
-              <div className="space-y-2">
-                {activities.slice(0, 4).map((a) => (
-                  <div
-                    key={a.id}
-                    className="flex items-center justify-between py-2 px-2.5 rounded-lg bg-black/40 border border-white/5 hover:border-white/15 transition-all text-xs"
-                    data-activity-id={a.id}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
+            )}
+          </div>
+        </div>
+
+        {/* 4. Horizontal Grid: Category Breakdown (Left) + Activities & Target Controls (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
+          {/* Left 2 Cols: Category Chart & Table */}
+          <div className="card lg:col-span-2">
+            <h2 className="text-base font-bold text-white uppercase tracking-wider mb-4 flex items-center justify-between">
+              <span>Emissions By Category</span>
+              <span className="text-xs font-mono text-gray-400 font-normal">6 Factors Audit</span>
+            </h2>
+            {activities.length === 0 ? (
+              <div className="text-center py-12 text-gray-400" data-testid="empty-state">
+                <span className="text-4xl mb-3 block">🌍</span>
+                <p className="font-medium">No activities logged yet this week</p>
+                <p className="text-sm mt-1">
+                  <Link href="/log" className="text-emerald-400 underline">Log your first activity</Link>
+                </p>
+              </div>
+            ) : (
+              <CO2Chart data={breakdown} />
+            )}
+          </div>
+
+          {/* Right 1 Col: Set Target & Recent Activities */}
+          <div className="space-y-6">
+            {/* Target Update Form */}
+            <div className="card" id="set-target">
+              <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1.5">
+                {target ? 'Update Target Goal' : 'Configure Weekly Target'}
+              </h3>
+              <p className="text-xs text-gray-300 mb-3 leading-relaxed">
+                Define your weekly CO₂ threshold in kg.
+              </p>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    className="input pr-10 font-mono text-sm py-2"
+                    placeholder={target ? String(target) : 'e.g. 30'}
+                    min="0.1"
+                    step="0.5"
+                    value={targetForm.value}
+                    onChange={(e) => setTargetForm((f) => ({ ...f, value: e.target.value }))}
+                    aria-label="Weekly CO2 target in kg"
+                    data-testid="target-input"
                   />
-                  <span className="font-semibold text-gray-200 truncate">{getTypeName(a.type)}</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold font-mono">kg</span>
                 </div>
-                <div className="text-right font-mono flex-shrink-0">
-                  <span className="font-bold text-white">{Number(a.co2_kg).toFixed(2)} kg</span>
+                <button
+                  onClick={handleSaveTarget}
+                  disabled={targetForm.saving || !targetForm.value}
+                  className="btn-primary text-xs py-2 px-4 whitespace-nowrap"
+                  data-testid="save-target-button"
+                >
+                  {targetForm.saving ? 'Saving…' : targetForm.saved ? '✓ Set' : 'Save'}
+                </button>
+              </div>
+            </div>
+
+            {/* Recent Activities List */}
+            {activities.length > 0 && (
+              <div className="card">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Recent Logs</h3>
+                  <Link href="/history" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold hover:underline">
+                    All ({activities.length}) →
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {activities.slice(0, 4).map((a) => (
+                    <div
+                      key={a.id}
+                      className="flex items-center justify-between py-2 px-2.5 rounded-lg bg-black/40 border border-white/5 hover:border-white/15 transition-all text-xs"
+                      data-activity-id={a.id}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: CATEGORY_COLORS[a.type] }}
+                        />
+                        <span className="font-semibold text-gray-200 truncate">{getTypeName(a.type)}</span>
+                      </div>
+                      <div className="text-right font-mono flex-shrink-0">
+                        <span className="font-bold text-white">{Number(a.co2_kg).toFixed(2)} kg</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
-      )}
-        </div>
-      </div>
 
-      {/* 5. AI Carbon Coach (RAG Knowledge Base & Simulation) */}
-      <div id="ai-coach" className="max-w-5xl mx-auto scroll-mt-12 group">
-        <div className="relative rounded-3xl p-1 transition-all duration-700 bg-gradient-to-r hover:from-emerald-500/30 hover:via-teal-500/20 hover:to-transparent from-emerald-500/10 via-transparent to-transparent shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.3)]">
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-[2rem] blur opacity-10 group-hover:opacity-30 transition duration-1000 group-hover:duration-200" />
-          <div className="relative rounded-2xl bg-black/40 ring-1 ring-white/10 backdrop-blur-sm">
-            <AICarbonCoach />
+        {/* 5. AI Carbon Coach (RAG Knowledge Base & Simulation) */}
+        <div id="ai-coach" className="max-w-5xl mx-auto scroll-mt-12 group">
+          <div className="relative rounded-3xl p-1 transition-all duration-700 bg-gradient-to-r hover:from-emerald-500/30 hover:via-teal-500/20 hover:to-transparent from-emerald-500/10 via-transparent to-transparent shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-[2rem] blur opacity-10 group-hover:opacity-30 transition duration-1000 group-hover:duration-200" />
+            <div className="relative rounded-2xl bg-black/40 ring-1 ring-white/10 backdrop-blur-sm">
+              <AICarbonCoach />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
+

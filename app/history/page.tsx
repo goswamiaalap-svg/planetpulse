@@ -8,8 +8,10 @@ export const metadata = {
 
 export default function HistoryPage() {
   return (
-    <Suspense fallback={<LoadingSpinner message="Loading history…" />}>
-      <HistoryClient />
-    </Suspense>
+    <div className="w-full px-4 sm:px-6 lg:pl-24 lg:pr-8 py-8">
+      <Suspense fallback={<LoadingSpinner message="Loading history…" />}>
+        <HistoryClient />
+      </Suspense>
+    </div>
   )
 }

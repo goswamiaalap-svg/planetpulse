@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body className={`${inter.className} font-sans min-h-screen text-white relative overflow-x-hidden bg-[#050706]`}>
-        {/* Full-viewport Cinematic Background Video matching PramaanCheck */}
+        {/* Full-viewport Cinematic Background Video — ambient dark layer for non-hero pages */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
           <video
             autoPlay
@@ -44,22 +44,22 @@ export default function RootLayout({
               type="video/mp4"
             />
           </video>
-          {/* Subtle cinematic vignette / dark contrast overlay */}
+          {/* Dark overlay for non-hero pages */}
           <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
         </div>
 
-        {/* Foreground Page Content */}
-        <div className="relative z-10 min-h-screen flex">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-x-hidden">
-            <div className="lg:hidden">
-              <Navbar />
-            </div>
-            <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
-              {children}
-            </main>
+        {/* Fixed Sidebar — overlays content, does NOT compress layout */}
+        <Sidebar />
+
+        {/* Full-width page content — no flex row with sidebar */}
+        <div className="relative z-10 min-h-screen flex flex-col">
+          <div className="lg:hidden">
+            <Navbar />
           </div>
+          <main className="flex-1 w-full">
+            {children}
+          </main>
         </div>
       </body>
     </html>
