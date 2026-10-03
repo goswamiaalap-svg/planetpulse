@@ -130,7 +130,7 @@ export default function DashboardPage() {
   return (
     <>
       {/* 1. Editorial Cinematic Hero — True full-viewport, independent of sidebar */}
-      <section className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
+      <section className="relative w-full min-h-[105vh] overflow-hidden flex flex-col items-center justify-center">
         {/* Hero Video Background — absolute, covers full viewport */}
         <div className="absolute inset-0 z-0" style={{ backgroundColor: 'hsl(201, 100%, 13%)' }}>
           <video
@@ -149,6 +149,15 @@ export default function DashboardPage() {
           {/* Subtle dark overlay for text legibility against bright video */}
           <div className="absolute inset-0 bg-black/20" />
         </div>
+
+        {/* Bottom gradient fade — blends hero into the dark dashboard seamlessly */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-[5] pointer-events-none"
+          style={{
+            height: '320px',
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(5,7,6,0.4) 35%, rgba(5,7,6,0.8) 65%, #050706 100%)',
+          }}
+        />
 
         {/* Hero Content — Navy text, centered, with left padding for sidebar clearance */}
         <div className="relative z-10 text-center px-6 sm:px-8 lg:pl-28 max-w-[1280px] mx-auto w-full flex flex-col items-center justify-center py-24">
@@ -191,10 +200,17 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Dashboard Content — sidebar-aware padding, full-bleed background inherited from layout */}
-      <div className="w-full px-4 sm:px-6 lg:pl-28 lg:pr-8 py-8 space-y-6">
+      {/* Dashboard Content — emerges smoothly from the hero gradient fade */}
+      <div className="relative w-full px-4 sm:px-6 lg:pl-28 lg:pr-8 pt-2 pb-8 space-y-6">
+        {/* Atmospheric bleed — warm gradient echo of the hero tones fading into dark base */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none z-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(45,35,28,0.12) 0%, rgba(30,25,22,0.06) 40%, transparent 100%)',
+          }}
+        />
         {/* 2. Stats Row: 5 compact balanced cards */}
-        <div className="relative w-full rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
+        <div className="relative w-full rounded-2xl p-1 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border border-white/10 shadow-2xl backdrop-blur-sm z-[1]">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-2">
             {/* Stat 1: Total CO2 */}
             <div className="card text-center py-4 px-3 border-white/10 hover:border-emerald-500/40 transition-all bg-black/40">
