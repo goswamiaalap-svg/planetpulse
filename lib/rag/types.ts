@@ -59,6 +59,7 @@ export interface OutputValidationResult {
   isValid: boolean
   violations: string[]
   sanitizedAnswer?: string
+  sanitizedRecommendations?: string[]
   checkedFactsCount: number
   unsupportedClaimsCount: number
 }

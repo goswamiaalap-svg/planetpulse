@@ -1,6 +1,7 @@
 /**
  * lib/rag/validation/outputValidator.ts
- * Output validation layer for verifying factual consistency, grounding, and domain compliance
+ * Rigorous output validation layer verifying factual grounding, user data consistency,
+ * data completeness compliance, and tone policy.
  */
 
 import { EMISSION_FACTORS } from '@/lib/co2'
@@ -12,11 +13,14 @@ export function validateCoachOutput(
   domainDecision: DomainDecision,
   userContext: UserContext,
   retrievedText: string,
-  isRefusalOrAbstention: boolean
+  isRefusalOrAbstention: boolean,
+  recommendations: string[] = []
 ): OutputValidationResult {
   const violations: string[] = []
   let checkedFactsCount = 0
   let unsupportedClaimsCount = 0
+  let sanitizedAnswer = answer
+  const sanitizedRecommendations: string[] = [...recommendations]
 
   // 1. If it was an out-of-domain or abstention query, ensure it actually refused
   if (!domainDecision.isAllowed || isRefusalOrAbstention) {
@@ -26,6 +30,7 @@ export function validateCoachOutput(
       'i cannot follow instructions',
       'planetpulse knowledge base',
       'sustainability',
+      'verified information',
     ]
     const lower = answer.toLowerCase()
     const matchesRefusal = refusalSignatures.some((sig) => lower.includes(sig))
@@ -41,6 +46,11 @@ export function validateCoachOutput(
       checkedFactsCount: 1,
       unsupportedClaimsCount,
       sanitizedAnswer: violations.length === 0 ? answer : domainDecision.refusalReason || 'I can only assist with carbon footprint and climate questions.',
+      sanitizedRecommendations: [
+        'Ask about reducing transportation or driving emissions.',
+        'Ask how to reduce electricity and household power usage.',
+        'Explore carbon footprint comparisons for diet and meal choices.',
+      ],
     }
   }
 
@@ -71,10 +81,58 @@ export function validateCoachOutput(
     }
   }
 
-  // 4. Check that numerical user stats referenced in answer align with userContext
-  const totalMention = answer.match(/(\d+(?:\.\d+)?)\s*kg\s*(?:of\s*)?co2/i)
-  if (totalMention) {
+  // 4. Missing / Zero Data Validation:
+  // If user data is empty or zero-measured, reject claims attributing a primary emitting sector to the user!
+  const lowerAnswer = answer.toLowerCase()
+  if (userContext.dataStatus === 'empty' || userContext.dataStatus === 'db_error') {
+    const claimsUserHasPrimarySector =
+      /\b(your|in your (?:current )?footprint)[^.]*?\b(primary|largest|biggest|main|highest)\s+(?:source|sector|contributor|driver|emitter)\b/i.test(answer) ||
+      /\byour (?:primary|largest|biggest|main|highest) (?:source|sector|contributor|driver|emitter) is\b/i.test(answer)
+
+    if (claimsUserHasPrimarySector) {
+      violations.push('Falsely identified a primary emitting sector for the user when no activities are recorded for this period.')
+      unsupportedClaimsCount++
+      sanitizedAnswer = `No activity records have been logged in your carbon ledger for the current reporting period (${userContext.reportingPeriod.from || 'this week'}). Because your footprint is currently unrecorded, a primary emission sector cannot be determined. To calculate your footprint and receive tailored guidance, please log your recent activities such as commuting, electricity use, or meals.`
+    }
+  }
+
+  // 5. Unsupported Personal Transportation Recommendations:
+  // If user has NO car activity logged AND query does not mention cars/driving,
+  // do NOT recommend buying an EV, carpooling, or changing driving habits as a personal recommendation!
+  const hasCarActivity = userContext.sectors?.car?.logged && userContext.sectors.car.quantityTotal > 0
+  const queryMentionsCar = /\b(car|drive|driving|vehicle|commute|auto)\b/i.test(domainDecision.normalizedQuery)
+
+  if (!hasCarActivity && !queryMentionsCar) {
+    // Check if recommendations make unsolicited personal car/EV demands
+    for (let i = 0; i < sanitizedRecommendations.length; i++) {
+      const rec = sanitizedRecommendations[i]
+      if (/\b(electric vehicle|ev\b|carpool|driving habits|short trips currently taken by car)\b/i.test(rec)) {
+        violations.push(`Unsupported recommendation: Suggesting vehicle/EV changes (${rec}) without user car activity or query relevance.`)
+        unsupportedClaimsCount++
+        // Replace with an evidence-based recommendation suited to user context
+        if (userContext.sectors?.electricity?.logged) {
+          sanitizedRecommendations[i] = 'Optimize household electricity by auditing standby power on idle electronics.'
+        } else if (userContext.sectors?.veg_meal?.logged || userContext.sectors?.non_veg_meal?.logged) {
+          sanitizedRecommendations[i] = 'Explore plant-forward meal choices to lower dietary carbon intensity.'
+        } else {
+          sanitizedRecommendations[i] = 'Log your regular daily activities (transit, electricity, or meals) to identify personal reduction opportunities.'
+        }
+      }
+    }
+  }
+
+  // 6. Check that numerical user stats referenced in answer align with userContext
+  // Match claims like "you have logged 45 kg" or "weekly total is 45 kg"
+  const userTotalClaimRegex = /\b(?:logged|total(?: is| of)?|emitted)\s+(\d+(?:\.\d+)?)\s*kg\s*(?:of\s*)?co2\b/gi
+  let match: RegExpExecArray | null
+  while ((match = userTotalClaimRegex.exec(answer)) !== null) {
     checkedFactsCount++
+    const claimedNumber = parseFloat(match[1])
+    // Allow small rounding differences (e.g. 15.2 vs 15.25)
+    if (Math.abs(claimedNumber - userContext.weeklyTotalCO2) > 1.0) {
+      violations.push(`Numerical mismatch: Answer stated ${claimedNumber} kg CO2 as user total, but ledger shows ${userContext.weeklyTotalCO2} kg CO2.`)
+      unsupportedClaimsCount++
+    }
   }
 
   return {
@@ -82,6 +140,7 @@ export function validateCoachOutput(
     violations,
     checkedFactsCount,
     unsupportedClaimsCount,
-    sanitizedAnswer: answer,
+    sanitizedAnswer,
+    sanitizedRecommendations,
   }
 }

@@ -21,8 +21,15 @@ export async function POST(req: NextRequest) {
 
   const { total, target, breakdown } = body
 
-  if (!total || !target || !breakdown) {
+  if (typeof total !== 'number' || typeof target !== 'number' || !Array.isArray(breakdown) || target <= 0) {
     return NextResponse.json({ message: fallbackMessage(total ?? 0, target ?? 1) })
+  }
+
+  // If total is 0, user has not exceeded target
+  if (total <= 0) {
+    return NextResponse.json({
+      message: 'You currently have 0.0 kg CO₂ recorded this week and are well within your target. Log your daily activities to keep your carbon audit up to date!',
+    })
   }
 
   try {
@@ -38,7 +45,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     // Fallback — never throw to UI (DP1)
     console.error('[nudge] LLM call failed:', err)
-    return NextResponse.json({ message: fallbackMessage(total, target) })
+    return NextResponse.json({ message: fallbackMessage(total, target, breakdown) })
   }
 }
 
@@ -161,7 +168,22 @@ function smartFallback(
   return `You're at ${pct}% of your weekly target — mostly from ${topCategory} (${topCategoryPct}% of emissions). Great self-awareness! Next week, ${tip}, and you'll be right back on track.`
 }
 
-function fallbackMessage(total: number, target: number): string {
+function fallbackMessage(total: number, target: number, breakdown?: CategoryTotal[]): string {
   const pct = target > 0 ? Math.round((total / target) * 100) : 0
-  return `You're at ${pct}% of your weekly target (${total.toFixed(1)} kg CO₂ vs ${target} kg goal). Every sustainable choice counts — try one small green swap this week to get back on track!`
+  if (!breakdown || breakdown.length === 0 || total === 0) {
+    return `You're at ${pct}% of your weekly target (${total.toFixed(1)} kg CO₂ vs ${target} kg goal). Log your activities consistently to keep your carbon audit up to date!`
+  }
+  const sorted = [...breakdown].sort((a, b) => b.co2_kg - a.co2_kg)
+  const top = sorted[0]
+  const topName = top ? getTypeName(top.type) : 'activities'
+  const suggestions: Record<string, string> = {
+    'Car travel': 'try carpooling or public transit for 1-2 trips',
+    'Flight': 'consider high-speed rail for regional trips',
+    'Bus travel': 'combining errands can save extra transit emissions',
+    'Electricity': 'turn off idle electronics on standby',
+    'Vegetarian meal': 'keep up the plant-forward eating',
+    'Non-veg meal': 'swapping 1-2 meals for plant-based alternatives can lower your footprint',
+  }
+  const tip = suggestions[topName] || 'try one small green swap this week'
+  return `You're at ${pct}% of your weekly target (${total.toFixed(1)} kg CO₂ vs ${target} kg goal), with ${topName} being your largest recorded contributor. Next week, ${tip} to get right back on track!`
 }

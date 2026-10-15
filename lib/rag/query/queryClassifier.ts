@@ -55,12 +55,17 @@ export function classifyQuery(rawQuestion: string): ClassifiedQuery {
       q.includes('total this week') ||
       q.includes('my total co2') ||
       q.includes('how much co2 did i') ||
-      q.includes('my carbon summary')) &&
-    !q.includes('reduce') &&
-    !q.includes('lower') &&
-    !q.includes('cut') &&
-    !q.includes('how to') &&
-    !q.includes('advice')
+      q.includes('my carbon summary') ||
+      q.includes('largest emission source') ||
+      q.includes('primary source') ||
+      q.includes('biggest contributor') ||
+      q.includes('top sector') ||
+      q.includes('explain my footprint') ||
+      q.includes('why did my footprint increase') ||
+      q.includes('breakdown of my footprint')) &&
+    !q.includes('how to reduce') &&
+    !q.includes('tips to lower') &&
+    !q.includes('how to cut')
   ) {
     return { intent: 'footprint_explanation', requiresRAG: false, domainDecision }
   }
@@ -106,7 +111,7 @@ export function classifyQuery(rawQuestion: string): ClassifiedQuery {
 export function rewriteQueryForRetrieval(
   question: string,
   classification: ClassifiedQuery,
-  largestCategory: string
+  largestCategory?: string | null
 ): string {
   // If out of domain, do NOT rewrite to a carbon topic!
   if (!classification.domainDecision.isAllowed) {
@@ -130,9 +135,12 @@ export function rewriteQueryForRetrieval(
     return 'Household electricity carbon reduction, HVAC thermostat optimization, vampire standby power, and efficiency'
   }
 
-  // Generic reduction advice tailored to user's top emitting category
+  // Generic reduction advice tailored to user's top emitting category if verified
   if (classification.intent === 'reduction_advice' || classification.intent === 'weekly_goal') {
-    return `Practical lifestyle decarbonization strategies focusing especially on ${largestCategory.toLowerCase()} reduction and emission factors`
+    if (largestCategory && largestCategory.toLowerCase() !== 'none') {
+      return `Practical lifestyle decarbonization strategies focusing especially on ${largestCategory.toLowerCase()} reduction and emission factors`
+    }
+    return 'Core personal lifestyle decarbonization benchmarks, household emission factors, and high-impact energy and transit reduction'
   }
 
   return classification.domainDecision.normalizedQuery

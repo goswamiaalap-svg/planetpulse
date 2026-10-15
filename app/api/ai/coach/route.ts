@@ -41,12 +41,17 @@ export async function POST(req: NextRequest) {
       supabase.from('settings').select('weekly_target_kg').eq('id', 1).maybeSingle(),
     ])
 
+    const dbError = activitiesRes.error ? activitiesRes.error.message : null
     const activities: Activity[] = activitiesRes.data || []
     const prevActivities: Activity[] = prevActivitiesRes.data || []
     const weeklyTarget = settingsRes.data?.weekly_target_kg ?? null
 
-    // 2. Build non-PII User Context with previous week comparison
-    const userContext = buildUserContext(activities, weeklyTarget, prevActivities)
+    // 2. Build non-PII User Context with data completeness and reporting period
+    const userContext = buildUserContext(activities, weeklyTarget, {
+      previousWeekActivities: prevActivities,
+      dbError,
+      reportingPeriod: { from, to },
+    })
     const coachService = new CarbonCoachService()
 
     // 3. If streaming is requested, stream chunks via Server-Sent Events (SSE)
