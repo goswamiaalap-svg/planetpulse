@@ -61,6 +61,12 @@ export default function HistoryClient() {
     fetchActivities()
   }, [fetchActivities])
 
+  useEffect(() => {
+    const refreshActivities = () => { void fetchActivities() }
+    window.addEventListener('planetpulse:activities-updated', refreshActivities)
+    return () => window.removeEventListener('planetpulse:activities-updated', refreshActivities)
+  }, [fetchActivities])
+
   const handleTypeChange = (newType: ActivityType | 'all') => {
     setType(newType)
     updateURL(newType, from, to)

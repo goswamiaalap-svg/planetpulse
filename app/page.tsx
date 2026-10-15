@@ -64,6 +64,12 @@ export default function DashboardPage() {
     fetchData()
   }, [fetchData])
 
+  useEffect(() => {
+    const refreshActivities = () => { void fetchData() }
+    window.addEventListener('planetpulse:activities-updated', refreshActivities)
+    return () => window.removeEventListener('planetpulse:activities-updated', refreshActivities)
+  }, [fetchData])
+
   // Handle hash scrolling after data finishes loading
   useEffect(() => {
     if (!loading && typeof window !== 'undefined' && window.location.hash) {

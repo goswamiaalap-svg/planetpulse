@@ -67,6 +67,8 @@ Edit `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 OPENAI_API_KEY=sk-...
+# Optional dedicated HMAC key for unusually large AI log confirmations (falls back to the configured AI key)
+ACTIVITY_CONFIRMATION_SECRET=use-a-long-random-secret
 ```
 
 ### 4. Run the dev server
@@ -106,6 +108,9 @@ This hackathon track did not specify a "standard API" contract for script-based 
 
 - `GET /api/activities` — list activities (query: `from`, `to`, `type`)
 - `POST /api/activities` — create activity
+- `POST /api/activities/batch` — validate and create up to 10 activities in one request
+- `POST /api/ai/log` — extract and log multiple activities from one natural-language message
+- `DELETE /api/activities?id=<id>` — undo a logged activity
 - `GET /api/settings` — get weekly target
 - `PUT /api/settings` — set weekly target
 - `POST /api/nudge` — generate AI nudge message
