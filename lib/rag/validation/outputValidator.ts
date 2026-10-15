@@ -84,7 +84,7 @@ export function validateCoachOutput(
   // 4. Missing / Zero Data Validation:
   // If user data is empty or zero-measured, reject claims attributing a primary emitting sector to the user!
   const lowerAnswer = answer.toLowerCase()
-  if (userContext.dataStatus === 'empty' || userContext.dataStatus === 'db_error') {
+  if (userContext.dataStatus === 'empty' || userContext.dataStatus === 'db_error' || userContext.dataStatus === 'incomplete') {
     const claimsUserHasPrimarySector =
       /\b(your|in your (?:current )?footprint)[^.]*?\b(primary|largest|biggest|main|highest)\s+(?:source|sector|contributor|driver|emitter)\b/i.test(answer) ||
       /\byour (?:primary|largest|biggest|main|highest) (?:source|sector|contributor|driver|emitter) is\b/i.test(answer)

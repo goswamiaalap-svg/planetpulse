@@ -15,6 +15,8 @@
     "eval:latency": "tsx scripts/eval_rag.ts --suite=latency"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.17",
+    "@langchain/langgraph": "^1.5.0",
     "@supabase/supabase-js": "^2.45.0",
     "cheerio": "^1.2.0",
     "dotenv": "^18.0.5",

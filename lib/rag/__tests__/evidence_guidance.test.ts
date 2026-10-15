@@ -30,7 +30,7 @@ describe('Evidence-Based Personalized Carbon Guidance Suite (Cases A - J)', () =
     expect(ctx.dataStatus).toBe('zero_measured')
     expect(ctx.weeklyTotalCO2).toBe(0)
     expect(ctx.isZeroFootprint).toBe(true)
-    expect(ctx.hasValidFootprint).toBe(false)
+    expect(ctx.hasValidFootprint).toBe(true)
     expect(ctx.largestCategory).toBeNull()
 
     const res = await coachService.consultCoach('What did I emit this week?', ctx)
@@ -58,8 +58,9 @@ describe('Evidence-Based Personalized Carbon Guidance Suite (Cases A - J)', () =
     // Direct footprint explanation
     const statsRes = await coachService.consultCoach('What is my largest emission source?', ctx)
     expect(statsRes.grounded).toBe(true)
-    expect(statsRes.answer).toContain('unrecorded')
-    expect(statsRes.answer).toContain('cannot be identified')
+    expect(statsRes.answer).toContain('uncalculated')
+    expect(statsRes.answer).not.toContain('0.0 kg CO₂')
+    expect(statsRes.answer).toContain('cannot be determined')
     expect(statsRes.answer).not.toMatch(/primary emitting sector is/i)
 
     // Reduction advice query when data is empty

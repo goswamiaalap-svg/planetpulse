@@ -55,8 +55,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields: type, quantity, date' }, { status: 400 })
   }
 
-  if (typeof quantity !== 'number' || quantity <= 0) {
-    return NextResponse.json({ error: 'quantity must be a positive number' }, { status: 400 })
+  if (!Object.prototype.hasOwnProperty.call(ABSURD_THRESHOLDS, type)) {
+    return NextResponse.json({ error: 'Unsupported activity type' }, { status: 400 })
+  }
+
+  if (typeof quantity !== 'number' || !Number.isFinite(quantity) || quantity <= 0) {
+    return NextResponse.json({ error: 'quantity must be a finite positive number' }, { status: 400 })
+  }
+
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`))) {
+    return NextResponse.json({ error: 'date must be a valid YYYY-MM-DD date' }, { status: 400 })
   }
 
   // DP2: Server-side absurd input guard

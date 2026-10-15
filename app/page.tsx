@@ -79,6 +79,7 @@ export default function DashboardPage() {
 
   // Compute totals
   const totalCO2 = activities.reduce((sum, a) => sum + Number(a.co2_kg), 0)
+  const hasActivityData = activities.length > 0
 
   const breakdownMap: Partial<Record<ActivityType, number>> = {}
   for (const a of activities) {
@@ -213,10 +214,10 @@ export default function DashboardPage() {
                 data-testid="total-co2"
                 aria-label={`Total CO2 this week: ${totalCO2.toFixed(2)} kilograms`}
               >
-                {totalCO2.toFixed(1)}
+                {hasActivityData ? totalCO2.toFixed(1) : '—'}
               </div>
               <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-                This Week Total
+                {hasActivityData ? 'This Week Total' : 'Uncalculated'}
               </div>
             </div>
 
@@ -224,7 +225,7 @@ export default function DashboardPage() {
             <div className="card text-center py-4 px-3 border-white/10 hover:border-amber-500/40 transition-all bg-black/40">
               <div className="text-[11px] font-mono font-bold text-amber-400 mb-1">% TARGET</div>
               <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-                {target ? `${Math.round((totalCO2 / target) * 100)}%` : 'None'}
+                {target && hasActivityData ? `${Math.round((totalCO2 / target) * 100)}%` : '—'}
               </div>
               <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
                 Target Pace
@@ -257,10 +258,10 @@ export default function DashboardPage() {
             <div className="card text-center py-4 px-3 border-white/10 hover:border-rose-500/40 transition-all bg-black/40 col-span-2 sm:col-span-1">
               <div className="text-[11px] font-mono font-bold text-rose-400 mb-1">TOP SECTOR</div>
               <div className="text-lg sm:text-xl font-bold text-white truncate px-1 mt-1 font-mono">
-                {topCategory ? getTypeName(topCategory.type) : 'None'}
+                {topCategory ? getTypeName(topCategory.type) : '—'}
               </div>
               <div className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-semibold">
-                {topCategory ? `${topCategory.co2_kg.toFixed(1)} kg` : 'Primary driver'}
+                {topCategory ? `${topCategory.co2_kg.toFixed(1)} kg` : 'Not enough data'}
               </div>
             </div>
           </div>
@@ -269,7 +270,7 @@ export default function DashboardPage() {
         {/* 3. Horizontal Grid: Target Progress (Left) + AI Nudge (Right) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
           {/* Left Column: Weekly Target */}
-          <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} />
+          <ProgressBar total={totalCO2} target={target} weekProgress={weekProgress} dataAvailable={hasActivityData} />
 
           {/* Right Column: AI Nudge */}
           <div className="flex flex-col justify-center">
@@ -280,6 +281,12 @@ export default function DashboardPage() {
                 breakdown={breakdown}
                 isOver={isOver}
               />
+            ) : !hasActivityData ? (
+              <div className="card h-full flex flex-col justify-center items-center text-center p-6 border-white/10">
+                <span className="text-3xl mb-2" aria-hidden="true">🌿</span>
+                <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Build your baseline</h3>
+                <p className="text-xs text-gray-300 leading-relaxed max-w-sm">Your footprint is uncalculated until you log activities. Add a commute, meal, or energy use to get a meaningful insight.</p>
+              </div>
             ) : (
               <div className="card h-full flex flex-col justify-center items-center text-center p-6 border-white/10">
                 <span className="text-3xl mb-2">🌿</span>

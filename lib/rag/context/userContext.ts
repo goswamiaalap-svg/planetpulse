@@ -6,6 +6,7 @@ export type DataCompletenessStatus =
   | 'partial'        // 1 or 2 sectors logged, other sectors unrecorded
   | 'empty'          // No activity entries logged for the reporting period
   | 'zero_measured'  // User explicitly logged activities, but all have 0 kg CO2
+  | 'incomplete'    // One or more records cannot be safely calculated
   | 'db_error'       // Database ledger query failed or returned an error
 
 export interface SectorDetail {
@@ -41,6 +42,7 @@ export interface UserContext {
   // Breakdown & Ledger Summaries
   breakdownSummary: string
   recentActivitiesCount: number
+  invalidActivitiesCount: number
   activitiesSummary: string
 
   // Grounded Data Quality & Completeness Metadata
@@ -103,10 +105,14 @@ export function buildUserContext(
   const safePrevActivities: Activity[] = Array.isArray(prevActivities) ? prevActivities : []
 
   // Clean numerical validation to prevent NaN propagation
-  const total = safeActivities.reduce((sum, a) => {
-    const val = Number(a.co2_kg)
-    return sum + (isNaN(val) ? 0 : val)
-  }, 0)
+  const isValidRecord = (a: Activity) => Boolean(
+    a && ALL_ACTIVITY_TYPES.includes(a.type) &&
+    a.quantity !== null && a.quantity !== undefined && Number.isFinite(Number(a.quantity)) && Number(a.quantity) >= 0 &&
+    a.co2_kg !== null && a.co2_kg !== undefined && Number.isFinite(Number(a.co2_kg)) && Number(a.co2_kg) >= 0
+  )
+  const validActivities = safeActivities.filter(isValidRecord)
+  const invalidActivitiesCount = safeActivities.length - validActivities.length
+  const total = validActivities.reduce((sum, a) => sum + Number(a.co2_kg), 0)
 
   const prevTotal = safePrevActivities.reduce((sum, a) => {
     const val = Number(a.co2_kg)
@@ -129,7 +135,7 @@ export function buildUserContext(
     non_veg_meal: { type: 'non_veg_meal', name: getTypeName('non_veg_meal'), unit: getUnitLabel('non_veg_meal'), logged: false, count: 0, quantityTotal: 0, co2_kg: 0, percentOfTotal: 0 },
   }
 
-  for (const a of safeActivities) {
+  for (const a of validActivities) {
     if (a && a.type && sectorMap[a.type]) {
       const co2 = Number(a.co2_kg) || 0
       const qty = Number(a.quantity) || 0
@@ -184,9 +190,12 @@ export function buildUserContext(
   } else if (safeActivities.length === 0) {
     dataStatus = 'empty'
     dataCompletenessDescription = 'No activities recorded for the current reporting period. Footprint is uncalculated.'
+  } else if (invalidActivitiesCount > 0) {
+    dataStatus = 'incomplete'
+    dataCompletenessDescription = `${invalidActivitiesCount} activity record(s) are missing valid calculation inputs and were excluded. ${validActivities.length} valid record(s) remain.`
   } else if (total === 0) {
     dataStatus = 'zero_measured'
-    dataCompletenessDescription = `Measured footprint is 0.0 kg CO₂ across ${safeActivities.length} recorded events with zero net emissions.`
+    dataCompletenessDescription = `Measured footprint is 0.0 kg CO₂ across ${validActivities.length} valid recorded events.`
   } else if (sectorsWithData.length >= 3) {
     dataStatus = 'complete'
     dataCompletenessDescription = `Comprehensive footprint tracked across ${sectorsWithData.length} sectors (${sectorsWithData.join(', ')}).`
@@ -224,12 +233,13 @@ export function buildUserContext(
     largestCategoryCO2,
     largestCategoryPercent,
     breakdownSummary,
-    recentActivitiesCount: safeActivities.length,
+    recentActivitiesCount: validActivities.length,
+    invalidActivitiesCount,
     activitiesSummary,
     dataStatus,
     dbErrorMessage: dbError || undefined,
-    hasValidFootprint: total > 0 && safeActivities.length > 0,
-    isZeroFootprint: safeActivities.length > 0 && total === 0,
+    hasValidFootprint: validActivities.length > 0,
+    isZeroFootprint: validActivities.length > 0 && total === 0 && invalidActivitiesCount === 0,
     reportingPeriod,
     sectors: sectorMap,
     sectorsWithData,

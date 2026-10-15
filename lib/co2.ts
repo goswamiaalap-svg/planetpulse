@@ -19,6 +19,12 @@ export type ActivityType = keyof typeof EMISSION_FACTORS
  * @returns CO2 in kg, rounded to 3 decimal places
  */
 export function calculateCO2(type: ActivityType, quantity: number): number {
+  if (!Object.prototype.hasOwnProperty.call(EMISSION_FACTORS, type)) {
+    throw new Error(`Unsupported activity type: ${String(type)}`)
+  }
+  if (!Number.isFinite(quantity) || quantity < 0) {
+    throw new Error('Quantity must be a finite, non-negative number')
+  }
   return +(EMISSION_FACTORS[type] * quantity).toFixed(3)
 }
 

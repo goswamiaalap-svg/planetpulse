@@ -6,9 +6,10 @@ type Props = {
   total: number
   target: number | null
   weekProgress: WeekProgress
+  dataAvailable?: boolean
 }
 
-export default function ProgressBar({ total, target, weekProgress }: Props) {
+export default function ProgressBar({ total, target, weekProgress, dataAvailable = true }: Props) {
   // No target set
   if (target === null || target === undefined || target <= 0) {
     return (
@@ -25,6 +26,15 @@ export default function ProgressBar({ total, target, weekProgress }: Props) {
             to track your pace.
           </p>
         </div>
+      </div>
+    )
+  }
+
+  if (!dataAvailable) {
+    return (
+      <div className="card">
+        <h2 className="text-base font-bold text-gray-200 uppercase tracking-wider mb-3">Weekly Target</h2>
+        <p className="text-sm text-gray-400">Your footprint is uncalculated for this week. Log an activity to compare it with your target of {target} kg CO₂.</p>
       </div>
     )
   }

@@ -17,6 +17,35 @@ export type Settings = {
   weekly_target_kg: number | null
 }
 
+export type Routine = {
+  id: string
+  title: string
+  type: ActivityType
+  quantity: number
+  days_of_week: number[] // 1=Mon, ..., 7=Sun
+  is_active: boolean
+  created_at: string
+}
+
+export type HabitGoal = {
+  id: string
+  title: string
+  category: ActivityType
+  target_action: string
+  weekly_goal_count: number
+  completed_count: number
+  archived: boolean
+  created_at: string
+}
+
+export type RecommendationFeedback = {
+  id: string
+  recommendation: string
+  action: 'accepted' | 'dismissed' | 'completed'
+  context_category: string | null
+  created_at: string
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -24,13 +53,35 @@ export type Database = {
         Row: Activity
         Insert: Omit<Activity, 'id' | 'created_at'>
         Update: Partial<Omit<Activity, 'id' | 'created_at'>>
+        Relationships: []
       }
       settings: {
         Row: Settings
         Insert: Settings
         Update: Partial<Settings>
+        Relationships: []
+      }
+      routines: {
+        Row: Routine
+        Insert: Omit<Routine, 'id' | 'created_at'>
+        Update: Partial<Omit<Routine, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      habits: {
+        Row: HabitGoal
+        Insert: Omit<HabitGoal, 'id' | 'created_at'>
+        Update: Partial<Omit<HabitGoal, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      recommendation_feedback: {
+        Row: RecommendationFeedback
+        Insert: Omit<RecommendationFeedback, 'id' | 'created_at'>
+        Update: Partial<Omit<RecommendationFeedback, 'id' | 'created_at'>>
+        Relationships: []
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
   }
 }
 

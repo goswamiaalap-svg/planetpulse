@@ -207,7 +207,7 @@ export class CarbonCoachService {
         const periodStr = userContext.reportingPeriod.from
           ? `the current reporting period (${userContext.reportingPeriod.from}${userContext.reportingPeriod.to ? ` to ${userContext.reportingPeriod.to}` : ''})`
           : 'this week'
-        const answer = `You have not logged any activity records for ${periodStr}. Because your footprint is currently unrecorded, your total emissions are 0.0 kg CO₂ and your primary emitting sector cannot be identified from data. To calculate your actual carbon footprint and identify your largest emission source, please log your recent activities (such as commuting distance, electricity use, or meals) in the Log Activity form.`
+        const answer = `You have not logged any activity records for ${periodStr}. Your footprint is uncalculated, so a total or primary emitting sector cannot be determined yet. To calculate it, log recent activities such as commuting distance, electricity use, or meals in the Log Activity form.`
 
         const trace: RagRequestTrace = {
           requestId,
@@ -748,17 +748,27 @@ Return ONLY valid JSON. No markdown backticks.`
     }
 
     // --- Scenario A: Empty Footprint (No activities logged) ---
-    if (userContext.dataStatus === 'empty' || userContext.dataStatus === 'db_error') {
-      const answer = `Your carbon ledger currently shows no recorded activities for this reporting period. Because no personal data is logged, your primary emissions source cannot be determined from your ledger.${factualEvidence ? `${factualEvidence}` : ` According to ${sourceName}, establishing a personal baseline is the first essential step toward targeted reduction.`}`
+    if (userContext.dataStatus === 'empty' || userContext.dataStatus === 'db_error' || userContext.dataStatus === 'incomplete') {
+      const answer = userContext.dataStatus === 'db_error'
+        ? 'I could not load your activity ledger, so I cannot make a personalized footprint assessment right now. Please try again shortly.'
+        : userContext.dataStatus === 'incomplete'
+          ? `Some activity records are missing valid calculation inputs and were excluded. ${userContext.dataCompletenessDescription} I cannot give a complete personalized assessment until those records are corrected.`
+          : `Your carbon ledger has no recorded activities for this reporting period. Your footprint is uncalculated, so your primary emissions source cannot be determined.${factualEvidence ? `${factualEvidence}` : ''}`
       return {
         answer,
         summary: 'Baseline activity logging needed to calculate footprint.',
-        recommendations: [
+        recommendations: userContext.dataStatus === 'incomplete'
+          ? ['Review and correct the incomplete activity records in your history.']
+          : [
           'Log your daily commuting travel (car, bus, or train) in the Log Activity tab',
           'Record your household electricity consumption (kWh) or recent utility estimate',
           'Track your meals to audit dietary carbon intensity',
         ],
-        reason: `Grounded in ${sourceName} guidelines: data collection is required before identifying personal reduction opportunities.`,
+        reason: userContext.dataStatus === 'incomplete'
+          ? 'Incomplete activity records were excluded from this assessment.'
+          : userContext.dataStatus === 'db_error'
+            ? 'The personal activity ledger could not be loaded.'
+            : 'Personal activity data is required before identifying personal reduction opportunities.',
       }
     }
 
