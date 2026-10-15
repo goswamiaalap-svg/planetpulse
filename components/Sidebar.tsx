@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, PenLine, ScrollText, Bot, Settings, Plus, Menu, X, Leaf } from 'lucide-react'
+import { LayoutDashboard, PenLine, ScrollText, Bot, Settings, Plus, Menu, X, Target, ChartNoAxesCombined, Footprints } from 'lucide-react'
 
 const sidebarLinks = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/log', label: 'Log Activity', icon: PenLine },
-  { href: '/history', label: 'History Gazette', icon: ScrollText },
-  { href: '/#ai-coach', label: 'AI Carbon Coach', icon: Bot },
-  { href: '/#set-target', label: 'Settings', icon: Settings },
+  { href: '/', label: 'Overview', icon: LayoutDashboard },
+  { href: '/footprint', label: 'My Footprint', icon: Footprints },
+  { href: '/coach', label: 'AI Coach', icon: Bot },
+  { href: '/habits', label: 'Habits & Goals', icon: Target },
+  { href: '/insights', label: 'Insights & Reports', icon: ChartNoAxesCombined },
+  { href: '/history', label: 'Activity History', icon: ScrollText },
+  { href: '/settings', label: 'Settings & Privacy', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -42,7 +44,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 space-y-2 overflow-hidden">
+      <nav className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden">
         {sidebarLinks.map((link) => {
           const isActive = pathname === link.href || (pathname === link.href.split('#')[0] && link.href !== '/')
 

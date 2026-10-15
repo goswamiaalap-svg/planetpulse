@@ -2,16 +2,20 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 
 const navLinks = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/log', label: 'Log Activity' },
-  { href: '/history', label: 'History' },
-  { href: '/#set-target', label: 'Target' },
+  { href: '/', label: 'Overview' },
+  { href: '/footprint', label: 'Footprint' },
+  { href: '/coach', label: 'AI Coach' },
+  { href: '/habits', label: 'Habits' },
+  { href: '/insights', label: 'Insights' },
+  { href: '/settings', label: 'Settings' },
 ]
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <header className="relative z-50 w-full">
@@ -29,7 +33,7 @@ export default function Navbar() {
         </Link>
 
         {/* Center — Navigation links (hidden on mobile) */}
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
           {navLinks.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -60,12 +64,11 @@ export default function Navbar() {
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
+          className="lg:hidden p-2 text-white/60 hover:text-white transition-colors"
           aria-label="Menu"
-          onClick={() => {
-            const nav = document.getElementById('mobile-nav')
-            if (nav) nav.classList.toggle('hidden')
-          }}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+          onClick={() => setMenuOpen((open) => !open)}
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
@@ -76,7 +79,7 @@ export default function Navbar() {
       {/* Mobile Nav Dropdown */}
       <nav
         id="mobile-nav"
-        className="hidden md:hidden px-8 pb-4 space-y-1"
+        className={`${menuOpen ? 'block' : 'hidden'} lg:hidden px-4 sm:px-8 pb-4 space-y-1`}
       >
         {navLinks.map((link) => {
           const isActive = pathname === link.href
@@ -84,6 +87,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={() => setMenuOpen(false)}
               className={`block py-2.5 px-4 rounded-xl text-[14px] font-medium transition-all ${
                 isActive
                   ? 'text-white bg-white/10'
